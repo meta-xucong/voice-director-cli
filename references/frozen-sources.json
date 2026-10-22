@@ -1,0 +1,74 @@
+{
+  "captured_utc": "2026-10-22",
+  "policy": "Read-only reference inspection; do not run reference repository code, install dependencies, download weights, or call provider APIs.",
+  "repositories": [
+    {
+      "id": "fish-speech",
+      "url": "https://github.com/fishaudio/fish-speech",
+      "commit": "541566932abbaebcb0a40e562a1f846738383f38",
+      "mapping": "Only the documented [pause], [excited], and [whisper] tags are compiled when explicitly requested; generic free-text delivery/emphasis stays unsupported. Keep model-guided status and separate code-license materials from S2-Pro weight terms.",
+      "files": [
+        {"path": "README.md", "sha256": "BAA129FAC0B9D32C55B3972BF8CCABEAB3EBBA1CA435E313E20C0ADEA5A7088D"},
+        {"path": "LICENSE", "sha256": "733A32442087ACBDA12ECAFE8E71EB8EE5890C89B50CE7AC4EA3777FAA3C823E"}
+      ]
+    },
+    {
+      "id": "cosyvoice",
+      "url": "https://github.com/QwenAudio/CosyVoice",
+      "commit": "074ca6dc9e80a2f424f1f74b48bdd7d3fea531cc",
+      "mapping": "Structured text/instruction separation and pronunciation override capability profile; compile request data only, no inference.",
+      "files": [
+        {"path": "README.md", "sha256": "66436370172C2830ED98AA643B31898C65E16EEE14ADE68F00828D21FAE602E0"},
+        {"path": "example.py", "sha256": "5285FE12F5A71A5225DCD06072496A8E31772D8E7FB0AF5FE428C72C637691EC"},
+        {"path": "cosyvoice/cli/cosyvoice.py", "sha256": "4B2A605F129D172CD031286A14A591396C2E8ED0BF53258ACC7445525FDAA65B"}
+      ]
+    },
+    {
+      "id": "chattts",
+      "url": "https://github.com/2noise/ChatTTS",
+      "commit": "77b89ee281cd479f5b1a787ada330dc975ca1f2a",
+      "mapping": "Constrained token allowlist; do not infer general emotional controls from pause/laughter tokens.",
+      "files": [
+        {"path": "README.md", "sha256": "3447FE17C72A3250BD2DC55E2188247F3D52E1CAC1A7F69FAC955D022FF1CE01"}
+      ]
+    },
+    {
+      "id": "parler-tts",
+      "url": "https://github.com/huggingface/parler-tts",
+      "commit": "d108732cd57788ec86bc857d99a6cabd66663d68",
+      "mapping": "Separate global speaker description from per-chunk delivery description; model-guided only.",
+      "files": [
+        {"path": "README.md", "sha256": "9FBF192AF31078BB58A0BBF980586EE837FC58639C9AC60FBA8E94C1EB475B69"}
+      ]
+    },
+    {
+      "id": "f5-tts",
+      "url": "https://github.com/SWivid/F5-TTS",
+      "commit": "2f866649b779881af8bd644e76b9a6d95053da29",
+      "mapping": "Semantic chunk manifests and boundary metadata only; cross-fade/audio editing is deferred. Do not derive emotion support from chunk support.",
+      "files": [
+        {"path": "README.md", "sha256": "3C74DA9760857DE03A0FE22D6124FD50000B986C6AEBA6C23BB14635E20E4AE1"},
+        {"path": "src/f5_tts/infer/utils_infer.py", "sha256": "161F33E8F81BB29E9EBC5BB0D18B46012942739AA37025876B4DDDA8D2B974E0"},
+        {"path": "src/f5_tts/infer/infer_cli.py", "sha256": "DB00DDBE0D45FB22A4258AD14707393F543FF59873B4693E26952D1C51E05F01"}
+      ]
+    },
+    {
+      "id": "whisperx",
+      "url": "https://github.com/m-bain/whisperX",
+      "commit": "db8fde4d31a3e7f49fe5835938685a76f5ba5477",
+      "mapping": "Consume alignment as a separate post-synthesis artifact. Upstream interpolates some missing times; target intentionally reports missing times without interpolation as a conservative deviation.",
+      "files": [
+        {"path": "README.md", "sha256": "98EBEE691EBEE0CA5BDD9257DAD72E1E74A9C216FF3ADB7FA68D5164007A84EA"},
+        {"path": "whisperx/alignment.py", "sha256": "FAE57AE8DC7AD779FA53E0CE2EFC1EFEC728508B2039C8EC4030FA6D51272292"},
+        {"path": "whisperx/utils.py", "sha256": "991409C66F31C30CC5D309F4E8CE39C9415825429C1277D65D62C045CAA0E5D9"}
+      ]
+    }
+  ],
+  "target_mapping_classes": {
+    "schema_validation": "AUTHORIZED_NEW",
+    "backend_adapters": "THIN_ADAPTER",
+    "chunk_manifest": "THIN_ADAPTER",
+    "alignment_report": "THIN_ADAPTER",
+    "provider_calls_and_model_inference": "OUT_OF_SCOPE"
+  }
+}
