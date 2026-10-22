@@ -9,7 +9,7 @@ metadata:
 
 This is the integrated workflow entry point. It coordinates two independent modules; it does not imply that the Python CLI performs the LLM work.
 
-The skill files in this repository are not automatically registered with Codex. To use them, manually copy the `courseware-pipeline`, `source-to-script`, and `humanized-source-rewrite` folders together into the Codex skills directory, preserving their sibling structure and the rewrite skill's `references/` folder. Keep source media, extracted text, narration, director maps, and generated reports in a private work directory outside the public repository; alignment reports can contain narration words.
+The skill files in this repository are not automatically registered with Codex. Run `scripts/install.ps1` from the repository root or follow the [repository installation guide](https://github.com/meta-xucong/voice-director-cli/blob/main/INSTALL.md) to install the four related Skills together, preserving their sibling structure and the rewrite skill's `references/` folder. Keep source media, extracted text, narration, director maps, and generated reports in a private work directory outside the public repository; alignment reports can contain narration words.
 
 ## Modules
 

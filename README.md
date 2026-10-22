@@ -7,6 +7,10 @@ This repository now documents two independent modules for turning authorized les
 
 The shared handoff freezes the narration bytes and verifies `director.json.source_sha256` against the exact UTF-8 script. See [the full pipeline contract and operating steps](docs/PIPELINE.md). The CLI does not run ASR/OCR, perform LLM correction or rewriting, generate audio, call TTS services, or upload content.
 
+## Install with Codex
+
+Ask Codex: “Read `https://github.com/meta-xucong/voice-director-cli`, follow its [INSTALL.md](INSTALL.md), and install the project and its Codex skills on this computer.” The guide explains the clone location, and [the setup script](scripts/install.ps1) installs the related skills, checks Python 3.12, and runs the offline tests. It uses WinGet to install Python only when Python 3.12 is missing. The project has no pip dependencies.
+
 The `skills/` entries are plain skill files in this repository; cloning it does not register them with Codex. To use the skills, manually copy the related folders `courseware-pipeline`, `source-to-script`, and `humanized-source-rewrite` together into your Codex skills directory, preserving their sibling folder structure and the `references/` subfolder. Keep course inputs, narration, director maps, and generated reports outside this public repository. Alignment reports can contain recognized narration words; use a private work directory such as a sibling `courseware-private` folder. The `.gitignore` entries are an extra safeguard, not a substitute for keeping user material outside the repository.
 
 This standard-library-only tool is offline: it does not install or load models, call TTS APIs, upload text, edit audio, or rewrite the narration.
