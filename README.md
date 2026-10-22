@@ -1,16 +1,25 @@
-# Voice Director CLI
+# Source-to-Voice Courseware Pipeline
 
-This standard-library-only tool validates a locked UTF-8 narration script, prepares backend-specific draft artifacts, builds lossless chunks, and audits word-alignment JSON. It is offline: it does not install or load models, call TTS APIs, upload text, edit audio, or rewrite the narration.
+This repository now documents two independent modules for turning authorized lesson source material into voice-directed narration:
+
+1. **Source to clean narration** is an LLM/skill workflow for separate ASR/OCR evidence, uncertainty-aware correction, complete knowledge coverage, and a natural spoken rewrite. Start with [the integrated pipeline skill](skills/courseware-pipeline/SKILL.md) or the [source-to-script module](skills/source-to-script/SKILL.md).
+2. **Voice direction** is the deterministic, offline Python CLI described below. It validates a locked UTF-8 narration script and director map, prepares backend-specific draft artifacts, builds lossless chunks, and audits word-alignment JSON.
+
+The shared handoff freezes the narration bytes and verifies `director.json.source_sha256` against the exact UTF-8 script. See [the full pipeline contract and operating steps](docs/PIPELINE.md). The CLI does not run ASR/OCR, perform LLM correction or rewriting, generate audio, call TTS services, or upload content.
+
+The `skills/` entries are plain skill files in this repository; cloning it does not register them with Codex. To use the skills, manually copy the related folders `courseware-pipeline`, `source-to-script`, and `humanized-source-rewrite` together into your Codex skills directory, preserving their sibling folder structure and the `references/` subfolder. Keep course inputs, narration, director maps, and generated reports outside this public repository. Alignment reports can contain recognized narration words; use a private work directory such as a sibling `courseware-private` folder. The `.gitignore` entries are an extra safeguard, not a substitute for keeping user material outside the repository.
+
+This standard-library-only tool is offline: it does not install or load models, call TTS APIs, upload text, edit audio, or rewrite the narration.
 
 Run commands from this directory with Python 3.12:
 
 ```powershell
 python -m voice_director --help
-python -m voice_director validate --script narration.txt --director director.json
+python -m voice_director validate --script ..\courseware-private\narration.txt --director ..\courseware-private\director.json
 python -m voice_director capabilities
-python -m voice_director compile --script narration.txt --director director.json --backend eleven_v4 --out out
-python -m voice_director chunk --script narration.txt --director director.json --backend f5 --max-chars 1200 --out out
-python -m voice_director alignment-audit --script narration.txt --alignment whisperx.json --out audit
+python -m voice_director compile --script ..\courseware-private\narration.txt --director ..\courseware-private\director.json --backend eleven_v4 --out ..\courseware-private\out
+python -m voice_director chunk --script ..\courseware-private\narration.txt --director ..\courseware-private\director.json --backend f5 --max-chars 1200 --out ..\courseware-private\out
+python -m voice_director alignment-audit --script ..\courseware-private\narration.txt --alignment ..\courseware-private\whisperx.json --out ..\courseware-private\audit
 ```
 
 Use `--overwrite` only when replacing artifacts in the chosen output directory. All generated files use fixed filenames under `--out`; input files are read-only. Each generated manifest records input and artifact hashes, `provider_calls: 0`, and `network_access: false`.
