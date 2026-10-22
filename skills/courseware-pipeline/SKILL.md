@@ -34,4 +34,4 @@ The modules can be used independently. If a user supplies an already-approved na
 - The CLI cannot establish transcript accuracy, factual correctness, natural TTS delivery, provider behavior, publication rights, or audio/video synchronization.
 - This repository has no software license. Its public visibility does not grant reuse rights.
 
-For end-to-end commands and file layout, see `../../docs/PIPELINE.md`.
+For end-to-end commands and file layout, see the [pipeline guide](https://github.com/meta-xucong/voice-director-cli/blob/main/docs/PIPELINE.md). The installed skill directory is not the CLI checkout. Locate your repository clone, confirm `git remote get-url origin` points to `https://github.com/meta-xucong/voice-director-cli` (an equivalent SSH URL is valid), and run the CLI commands from that clone's root. Use paths to your private work directory for inputs and outputs.

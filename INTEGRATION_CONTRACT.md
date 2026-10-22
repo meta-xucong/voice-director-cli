@@ -44,6 +44,10 @@ Allow generic integration docs and skill files, tests for the handoff contract, 
 6. No license file, private course content, machine paths, or secrets enter the public diff.
 7. After gates pass, update the existing GitHub repository and verify the pushed commit.
 
+## Bounded audit repair: input preservation
+
+Concrete defect: `--overwrite` could replace a frozen script, director map, or alignment input when an artifact path aliases it. The CLI repair is limited to rejecting output/input aliases (resolved paths and existing hardlinks) across compile, chunk, and alignment-audit, including the manifest, before writing any artifact. Regression tests must prove unchanged input bytes and no partial batch writes. The user authorized correction, independent re-audit, testing, and publication after those gates pass.
+
 ## Evidence not claimed
 
 `ROUTE_UNVERIFIED`; no special model/effort provenance is asserted. `HOOK_UNVERIFIED`; no lifecycle Hook registration is asserted. The bundled multi-agent workflow's terminal notification is a separate operational step.

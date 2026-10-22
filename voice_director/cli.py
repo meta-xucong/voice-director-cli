@@ -20,8 +20,18 @@ def _json_bytes(data):
     return (json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n").encode("utf-8")
 
 
-def _write_artifacts(out_dir, files, input_hashes, overwrite):
+def _write_artifacts(out_dir, files, input_hashes, overwrite, input_paths):
     output_dir = Path(out_dir)
+    # Preflight the whole batch before creating or replacing any artifacts.
+    for name in (*files, "manifest.json"):
+        target = output_dir / name
+        for input_path in map(Path, input_paths):
+            if (target.resolve() == input_path.resolve()
+                    or (target.exists() and input_path.exists()
+                        and target.samefile(input_path))):
+                raise ValidationError(
+                    f"output aliases input: {target} aliases {input_path}; "
+                    "choose a separate output directory")
     try:
         output_dir.mkdir(parents=True, exist_ok=True)
     except OSError as exc:
@@ -129,10 +139,10 @@ def _command_compile(args):
             },
         }
         files = {"compiled.json": compiled, "capability-report.json": report}
-        _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite)
+        _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite, (args.script, args.director))
         return {"written": sorted([*files, "manifest.json"]), "compile_status": "blocked", "error": str(exc)}, 2
     files = {"compiled.json": compiled, "capability-report.json": report}
-    _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite)
+    _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite, (args.script, args.director))
     code = 0 if report["supported"] and not str(compiled["compile_status"]).startswith("blocked") else 2
     return {"written": sorted([*files, "manifest.json"]), "compile_status": compiled["compile_status"], "backend": args.backend}, code
 
@@ -142,7 +152,7 @@ def _command_chunk(args):
     chunks = build_chunks(inputs["source"], inputs["director"], args.max_chars, args.backend)
     report = _control_report(args.backend, inputs["director"])
     files = {"chunks.json": chunks, "capability-report.json": report}
-    _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite)
+    _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite, (args.script, args.director))
     code = 0 if report["supported"] else 2
     return {"written": sorted([*files, "manifest.json"]), "chunk_count": len(chunks["chunks"]), "backend": args.backend}, code
 
@@ -176,7 +186,7 @@ def _command_alignment(args):
         }
     files = {"alignment-audit.json": report}
     hashes = {"script_sha256": source_sha256, "alignment_sha256": sha256_bytes(alignment_raw)}
-    _write_artifacts(args.out, files, hashes, args.overwrite)
+    _write_artifacts(args.out, files, hashes, args.overwrite, (args.script, args.alignment))
     return {"written": sorted([*files, "manifest.json"]), "status": report["status"], "error_count": len(report["errors"])}, 0 if report["status"] == "PASS" else 1
 
 

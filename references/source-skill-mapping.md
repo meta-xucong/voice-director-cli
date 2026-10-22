@@ -9,3 +9,5 @@ This crosswalk records how the source skills were adapted into the repository wo
 | `humanized-source-rewrite/references/editing-playbook.md` | `a231b51fe04bb4548e5879ea6356b3cff7889b060bd0f5cf66448e7781ea7788` | `skills/humanized-source-rewrite/references/editing-playbook.md` | Reader-purpose questions; Chinese prose cues with non-mechanical guardrails; maturity and handoff checks; teaching-narration adaptation; voice calibration; no detector-score optimization. |
 
 The adaptation intentionally omits visual redesign, final video rendering, cloud service selection, audio generation, and distribution workflows. Those are outside this repository integration's frozen scope. Stage A remains an LLM/skill workflow; Stage B remains the offline CLI. No course-specific transcript, media, outputs, local personal paths, or credentials are bundled.
+
+The missing original editing playbook is now available as the exact-byte [recovered snapshot](source-snapshots/editing-playbook.original.md), with [recovery evidence](source-recovery.md). Its 8,940 bytes match the frozen SHA-256 above. Review the snapshot as evidence; the installed skill continues to use the adapted playbook.

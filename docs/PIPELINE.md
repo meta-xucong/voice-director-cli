@@ -18,8 +18,7 @@ Stage 1 exports a clean copy as UTF-8 `narration.txt`. The file contains only wo
 Before creating `director.json`, freeze the exact byte sequence of `narration.txt`:
 
 ```powershell
-$bytes = [System.IO.File]::ReadAllBytes((Resolve-Path ..\courseware-private\narration.txt))
-$sha = [Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData($bytes)).ToLowerInvariant()
+$sha = (Get-FileHash -LiteralPath ..\courseware-private\narration.txt -Algorithm SHA256).Hash.ToLowerInvariant()
 $sha
 ```
 
