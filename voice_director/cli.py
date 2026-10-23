@@ -15,6 +15,7 @@ from .errors import HumanReviewRequired, OutputExistsError, ValidationError, Voi
 from .editorial_gate import release as release_editorial_bundle
 from .profiles import get_license_review, get_profile, list_profiles
 from .schema import load_inputs, read_json, read_script, sha256_bytes
+from .voice_screen import validate_voice_screen_map
 
 
 def _json_bytes(data):
@@ -195,6 +196,11 @@ def _command_editorial_gate(args):
     return release_editorial_bundle(args.bundle, args.out, decisions=args.decisions), 0
 
 
+def _command_voice_screen(args):
+    payload, _ = read_json(args.map)
+    return validate_voice_screen_map(payload), 0
+
+
 def build_parser():
     parser = argparse.ArgumentParser(prog="voice-director", description="Validate, release reviewed narration, and compile offline voice-direction artifacts; never calls TTS providers.")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -233,6 +239,10 @@ def build_parser():
     editorial_gate.add_argument("--out", required=True)
     editorial_gate.add_argument("--decisions", help="hash-bound human-decisions.json created after reviewing an uncertainty packet")
     editorial_gate.set_defaults(handler=_command_editorial_gate)
+
+    voice_screen = subparsers.add_parser("validate-voice-screen", help="validate a private courseware voice/screen beat map")
+    voice_screen.add_argument("--map", required=True, help="private voice-screen-map.json path")
+    voice_screen.set_defaults(handler=_command_voice_screen)
 
     capabilities = subparsers.add_parser("capabilities", help="show frozen, declared backend capability profiles")
     capabilities.add_argument("--backend")

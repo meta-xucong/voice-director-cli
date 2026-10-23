@@ -2,6 +2,26 @@
 
 The integrated workflow routes among existing tools: source video to clean narration and visual assets, TTS choice and audition, full audio generation, then captions/timing and HyperFrames rendering.
 
+## Voice and screen are separate teaching channels
+
+Before detailed storyboarding, create a private `voice-screen-map.json`. Each beat records:
+
+- `id`, `duration_seconds`, exact `screen_text`, and the visual `focus`;
+- `voice_mode` (`summary`, `verbatim`, or `silent`), the actual `narration`, and `spoken_purpose` for summary narration;
+- `screen_only_terms` for identifiers the speaker must not read; technical beats set `technical_display: true`;
+- `assets` with a kind (`real_ui`, `official_illustration`, `original_graphic`, or `other`) and source; real UI captures also set `authentic: true`;
+- `transition.entry`, `transition.exit`, and `transition.motion` to bind cuts and camera movement to the teaching beat.
+
+For JSON, TOML, code, commands, paths, and exact field values, preserve the complete sanitized text on screen and explain the purpose, sequence, risk, and verification in the voice. `verbatim` requires a `verbatim_reason`. Do not expose credentials; use a clearly named placeholder. Every visual claim needs a source label: official feature descriptions and original diagrams are not UI screenshots. Prefer meaningful 3–10 second beats. Holds longer than 12 seconds require a documented `duration_reason` so learners have time to read. Use the existing HyperFrames/GSAP composition for measured fades, push/zoom, pan, and focus highlights; this map does not render video or synthesize speech.
+
+Validate the map locally, without a provider call:
+
+```powershell
+python -m voice_director validate-voice-screen --map ..\courseware-private\voice-screen-map.json
+```
+
+The validator checks the declared structure, summary-versus-syntax separation, source labels, long-hold reasons, and common credential patterns. It cannot verify semantic truth, rights, natural delivery, or final synchronization. If `uncertainty` is present, the command returns `AWAITING_HUMAN` and prints the question, evidence, impact, and recommendation. Show that exact packet in the conversation and wait for the user's explicit decision before approving the affected visual or narration. Then update the private map and validate again. Keep this material outside the public repository.
+
 ## Responsibility map
 
 | Handoff | Existing component | Result |
