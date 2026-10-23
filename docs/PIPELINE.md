@@ -15,9 +15,12 @@ The integrated workflow routes among existing tools: source video to clean narra
 ## Required source-to-speech editorial sequence
 
 1. Draft from the complete source map, preserving useful content and source order.
-2. The current main harness (usually Codex) personally reviews the completed narration for spoken naturalness, briefly identifies strengths and weaknesses, and performs exactly one bounded polish pass. This is part of every source-to-script run, not an optional extra or delegated worker step. The pass improves spoken syntax, transitions, classroom voice, and unnecessary written-sounding caveats while preserving mapped content. Do not impose a runtime target.
-3. Record the concise assessment and edit summary in private editorial notes. Keep them out of `narration.txt`.
-4. Refresh source-map paragraph references and rerun source-to-draft coverage and draft-to-source integrity after the polish. The independent read-only source-fidelity reviewer checks this polished frozen version; an earlier draft's PASS does not carry forward.
+2. The current main harness (usually Codex) personally reviews spoken naturalness, records strengths and listener-facing findings, and makes a bounded revision for those findings. Repeat this review/revision loop until its self-evaluation passes. Wording findings require a documented text change; a finding about source evidence or mapping may be resolved with a documented map-only repair and unchanged narration. Do not impose a runtime target.
+3. Record assessment, findings, edits, and self-evaluation in the private `harness-review.json`; keep them out of narration.
+4. Refresh source-map paragraph references after each text change. A distinct read-only source-fidelity reviewer checks the exact candidate; any non-passing verdict sends the candidate back through another harness round, map refresh, and fresh independent review. An earlier version's PASS does not carry forward.
+5. If the final review reports uncertainty as `INSUFFICIENT_EVIDENCE`, run `editorial-gate` to display the source and narration references, observed evidence, question, impact, recommendation, and a blank hash-bound `human-decisions.json` template. Wait for the user's explicit choice. Do not infer approval from silence.
+6. A user may choose `accept_as_is` with a recorded response and rationale; the gate then releases as `RELEASED_WITH_HUMAN_DECISIONS`, retaining the original independent-review verdict in the receipt. `request_revision` and `provide_evidence` remain blocked and return to the harness/reviewer loop. All other non-passing verdicts still require correction.
+7. Release through `python -m voice_director editorial-gate --bundle <private-run-directory> --out <new-release-directory> [--decisions <human-decisions.json>]`. Give downstream work only the released narration and receipt. Direct legacy `validate`/`compile` commands do not release narration.
 
 ## Required source-fidelity gate
 
@@ -27,7 +30,7 @@ Before drafting, create a private source coverage matrix using [`source-coverage
 
 A separate read-only reviewer must compare the polished frozen narration and complete source map with the source evidence. Any unmapped or unresolved useful item blocks a source-coverage PASS. If only a topic ledger was checked, report coverage as insufficient.
 
-After any writing or style change, update the source map and repeat the semantic audit against the changed text. Keep the exact audited draft hash in the private audit report so a later edit cannot inherit a stale PASS.
+After any writing or style change, update the source map and repeat the semantic audit against the changed text. The private review bundle binds source evidence, source map, draft, each harness revision, each independent review, and the final candidate with SHA-256 hashes. The gate checks that the final independent review and passing self-evaluation refer to the exact candidate it releases.
 
 Keep the existing workflow's human checkpoints: confirm source-use permission when it is not already established; get approval before sending source material or narration to a cloud provider or incurring paid generation; and proceed to full TTS only after the user accepts the clean narration and voice audition.
 
@@ -37,7 +40,7 @@ Use the [integrated skill](../skills/courseware-pipeline/SKILL.md) as the routin
 
 Stage 1 exports a clean copy as UTF-8 `narration.txt`. The file contains only words intended to be spoken. Keep the source map, knowledge index, correction log, coverage matrix, and editorial review material in separate files. Store the source video/audio, extracted text, narration, maps, and reports outside the public repository. An alignment audit can contain recognized narration words, so its output is user content too. For example, from the repository root use a sibling private directory such as `..\courseware-private\`; `.gitignore` also excludes `audit/` and `private-work/` as a safeguard.
 
-Only if Voice Director's optional backend-specific draft is needed, freeze the exact byte sequence of `narration.txt` before creating `director.json`:
+Only if Voice Director's optional backend-specific draft is needed, freeze the exact byte sequence of the released `narration.txt` before creating `director.json`:
 
 ```powershell
 $sha = (Get-FileHash -LiteralPath ..\courseware-private\narration.txt -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -46,7 +49,9 @@ $sha
 
 Set that exact lowercase SHA-256 value as `source_sha256` in `director.json`. The director map's segment offsets count Python Unicode code points in the decoded text. Segments must cover all characters, in order, without gaps or overlaps. Newline conversion, Unicode normalization, or any edit changes the fingerprint and can also invalidate offsets; regenerate the map or review all offsets after a change.
 
-Run the CLI validation only when using that optional Voice Director path:
+Run the editorial gate for every source-to-script release. The bundle contains `source-evidence.txt`, `source-map.csv` (with `source_item_id`, `disposition`, and `candidate_reference` columns), `draft.txt`, `candidate.txt`, `harness-review.json`, and `independent-review.json`. Review JSON schemas 1 and 2 are shown in [the optimization and evidence contract](EDITORIAL-GATE-OPTIMIZATION.md). The gate validates structure, hash continuity, role declarations, verdicts, and exact-byte copying. It cannot prove that a review was thoughtful, that a source map is complete, that role declarations are truthful, or that narration is semantically accurate.
+
+Use the legacy CLI validation only when using the optional Voice Director path:
 
 ```powershell
 python -m voice_director validate --script ..\courseware-private\narration.txt --director ..\courseware-private\director.json

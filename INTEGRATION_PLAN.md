@@ -17,14 +17,17 @@ Present the existing source-to-script skills and the Voice Director CLI as one r
 
 ## Shared handoff contract
 
-1. Stage A outputs a UTF-8 `narration.txt` containing only the approved, clean spoken copy. After drafting, the current main harness personally assesses strengths/weaknesses for spoken delivery and performs one bounded polish pass. Keep the assessment, source map, knowledge index, correction notes, coverage audit, and prosody direction outside this file. Refresh mapping and have an independent reviewer compare the polished frozen narration against the complete source map before handoff.
+1. Stage A outputs a UTF-8 `narration.txt` containing only approved, clean spoken copy. After drafting, the current main harness personally assesses spoken delivery and repeats bounded review/revision rounds until its self-evaluation passes. Every revision addresses recorded finding IDs and refreshes the source map. A distinct read-only reviewer compares the exact final narration against the complete source map. Release through `voice_director editorial-gate`; only its `release/narration.txt` is eligible for downstream TTS. Keep all review notes outside narration.
 2. Freeze the exact narration bytes before Stage B. Any text edit, newline conversion, or Unicode normalization after freezing requires regenerating the director map.
 3. Stage B `director.json` uses `schema_version: 1`, provides `source_sha256` equal to SHA-256 of the exact UTF-8 narration bytes, and segments that cover the decoded narration in code-point offsets without gaps or overlaps.
-4. `python -m voice_director validate --script narration.txt --director director.json` is the acceptance gate. A mismatch blocks the handoff. The CLI's input hash in its manifest records the same script fingerprint.
-5. The prose and editorial review remains a Stage A responsibility; the CLI validates structural and byte-level integrity, not content accuracy or voice quality.
+4. `python -m voice_director editorial-gate --bundle <private-run-directory> --out <new-release-directory>` is the narration release gate. The legacy `validate` command still validates only the director-map hash and is not a release signal. A later Stage B director map must use the released narration bytes and their exact hash.
+5. If a final independent review reports only `INSUFFICIENT_EVIDENCE` uncertainties, the CLI displays a hash-bound human review packet and blank decision template. It never defaults to approval. Explicit `accept_as_is` decisions permit a separately labeled release that retains the original non-pass verdict; revision or evidence requests remain blocked until a fresh review passes.
+6. The prose and editorial review remains a Stage A responsibility; the CLI validates structural and byte-level integrity, not content accuracy or voice quality.
 
 ## Planned repository changes
 
+- Add a deterministic `editorial-gate` CLI command, strict evidence schema, and offline tests while preserving existing command behavior.
+- Update source-to-script, courseware-pipeline, and humanized-source-rewrite skills so the iterative review/revision loop and editorial gate are normative.
 - Add `skills/courseware-pipeline/SKILL.md`: integrated entry workflow for the two independent modules.
 - Add `skills/source-to-script/SKILL.md`: source extraction, correction, coverage, and clean narration workflow.
 - Add a private-use source coverage matrix template for mapping source segments to the final narration.

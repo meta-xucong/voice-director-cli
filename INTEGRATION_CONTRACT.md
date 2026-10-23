@@ -9,7 +9,7 @@ Integrate the generic source-video-to-clean-narration workflow and the existing 
 - Module A: generic, LLM-assisted workflow for video/source inspection, separate ASR and OCR evidence, uncertainty-aware correction, complete source-indexed item coverage, natural speech rewrite, and clean narration output. Source fidelity is established by mapping the complete source and independently reviewing the frozen narration against it.
 - Module B: existing offline Python CLI for validating locked narration plus director map, compiling supported backend drafts, lossless chunking, and alignment audit.
 - Handoff: narration UTF-8 bytes are frozen by SHA-256; the voice module's `director.json.source_sha256` must equal that hash. No normalization is permitted.
-- Every source-to-script run includes one final spoken-delivery assessment and bounded polish performed by the current main harness after drafting; notes remain outside narration, and source mapping plus independent semantic review are refreshed against the polished frozen text.
+- Every source-to-script run includes as many bounded main-harness spoken-delivery assessment/revision rounds as needed to reach a passing self-evaluation. Wording findings must link to changed text; evidence-only findings may be resolved by a documented source-map repair with unchanged narration. Refresh the source map after wording edits, and require a distinct read-only semantic review against the exact final text and map. Every source-to-script narration handoff passes the deterministic editorial gate before downstream TTS work.
 - The repository may describe the combined workflow as an integrated project, but must state clearly that Module A is executed through an LLM/skill workflow, while the Python CLI does not perform ASR/OCR, semantic correction, rewriting, or TTS synthesis.
 - Do not include any course-specific source transcript, media, outputs, user data, secrets, machine-specific paths, or unrelated personal workflow artifacts.
 - Do not add a software license. Preserve the user's choice that the repository is public for viewing without a license grant.
@@ -27,13 +27,13 @@ Integrate the generic source-video-to-clean-narration workflow and the existing 
 
 ## Change boundary
 
-Allow generic integration docs and skill files, tests for the handoff contract, and narrowly required README/reference updates. Existing `voice_director/` behavior is out of scope unless a concrete handoff defect is found and separately justified. One writer owns implementation; independent auditors are read-only.
+Allow generic integration docs and skill files, tests for the handoff contract, narrowly required README/reference updates, and a deterministic offline `voice_director editorial-gate` command with its module/tests. Keep existing `validate`, `compile`, `chunk`, and `alignment-audit` behavior compatible. The gate validates hash-bound workflow evidence and exact-byte release only; it does not provide semantic review or prove declared identities. One writer owns implementation; independent auditors are read-only.
 
 ## D/I/A assessment
 
-- D0: scope is the explicit two-module integration and handoff, with no new provider execution or generated media.
+- D1: an authorized follow-on adds a local release gate and iterative review-evidence contract, without changing provider execution or generating media.
 - I2: integration crosses a generative skill workflow and deterministic CLI, sharing a narration artifact and hash contract.
-- A2: it changes the public repository's stated product scope and redistributes generic workflow instructions; privacy, source mapping, and license boundaries require independent review.
+- A1: it adds a release decision for supplied artifacts and stale-review invalidation; privacy and role claims require independent review.
 
 ## Acceptance evidence
 
@@ -43,7 +43,16 @@ Allow generic integration docs and skill files, tests for the handoff contract, 
 4. Existing and added deterministic tests pass offline.
 5. Separate general audit and source-fidelity audit both return PASS against the same frozen revision; all findings are resolved and re-audited.
 6. No license file, private course content, machine paths, or secrets enter the public diff.
-7. After gates pass, update the existing GitHub repository and verify the pushed commit.
+7. Push the reviewed and tested change to the already configured GitHub remote, as explicitly authorized by the user in the follow-on request.
+
+## Follow-on uncertainty review contract
+
+- If a final independent review identifies uncertainty with `INSUFFICIENT_EVIDENCE`, the CLI must show a structured, hash-bound human review packet with source location, narration location, observed evidence, unresolved question, impact, and recommendation. It must not guess or silently omit the uncertainty.
+- The packet includes a blank decision template. No decision defaults to acceptance. A human decision must be explicit and must bind the exact source, map, candidate, and independent-review bytes.
+- Only a final review with purely `INSUFFICIENT_EVIDENCE` uncertainty items can be considered for user disposition. `NEEDS_REVISION`, known errors, spoken-delivery failure, clean-copy failure, or missing/corrupt evidence remain blocking.
+- `accept_as_is` may release with a distinct `RELEASED_WITH_HUMAN_DECISIONS` state. The receipt preserves the independent review's original non-pass verdict and lists each accepted uncertainty and decision-file hash. It must never relabel the review as PASS.
+- `request_revision` and `provide_evidence` remain blocked and route the work back through the harness and a fresh independent review. Any material hash change invalidates prior decisions.
+- Backward compatibility: schema-v1 bundles that already pass all checks remain releasable; schema-v1 non-pass reviews do not gain a human override.
 
 ## Bounded audit repair: input preservation
 

@@ -11,7 +11,8 @@ from pathlib import Path
 from .adapters import _control_report, compile_backend
 from .alignment import audit_alignment
 from .chunking import build_chunks
-from .errors import OutputExistsError, ValidationError, VoiceDirectorError
+from .errors import HumanReviewRequired, OutputExistsError, ValidationError, VoiceDirectorError
+from .editorial_gate import release as release_editorial_bundle
 from .profiles import get_license_review, get_profile, list_profiles
 from .schema import load_inputs, read_json, read_script, sha256_bytes
 
@@ -190,8 +191,12 @@ def _command_alignment(args):
     return {"written": sorted([*files, "manifest.json"]), "status": report["status"], "error_count": len(report["errors"])}, 0 if report["status"] == "PASS" else 1
 
 
+def _command_editorial_gate(args):
+    return release_editorial_bundle(args.bundle, args.out, decisions=args.decisions), 0
+
+
 def build_parser():
-    parser = argparse.ArgumentParser(prog="voice-director", description="Validate and compile offline voice-director artifacts; never calls TTS providers.")
+    parser = argparse.ArgumentParser(prog="voice-director", description="Validate, release reviewed narration, and compile offline voice-direction artifacts; never calls TTS providers.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate = subparsers.add_parser("validate", help="validate the immutable script and director map")
@@ -223,6 +228,12 @@ def build_parser():
     alignment.add_argument("--overwrite", action="store_true")
     alignment.set_defaults(handler=_command_alignment)
 
+    editorial_gate = subparsers.add_parser("editorial-gate", help="review uncertainty with the user, then validate and release exact narration bytes")
+    editorial_gate.add_argument("--bundle", required=True)
+    editorial_gate.add_argument("--out", required=True)
+    editorial_gate.add_argument("--decisions", help="hash-bound human-decisions.json created after reviewing an uncertainty packet")
+    editorial_gate.set_defaults(handler=_command_editorial_gate)
+
     capabilities = subparsers.add_parser("capabilities", help="show frozen, declared backend capability profiles")
     capabilities.add_argument("--backend")
     capabilities.set_defaults(handler=None)
@@ -251,6 +262,9 @@ def main(argv=None):
         result, code = args.handler(args)
         _print_json(result)
         return code
+    except HumanReviewRequired as exc:
+        _print_json(exc.report)
+        return 3
     except VoiceDirectorError as exc:
         _print_json({"error": str(exc), "status": "FAIL"}, stream=sys.stderr)
         return 2
