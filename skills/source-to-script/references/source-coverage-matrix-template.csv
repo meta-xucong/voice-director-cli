@@ -1,0 +1,2 @@
+source_ids,source_item,normalized_meaning,disposition,narration_ref,decision_reason,evidence_confidence
+001-003,"[private source excerpt or item summary]","[meaning supported by ASR/OCR/audio]",retained,P001,,high

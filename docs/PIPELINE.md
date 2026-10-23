@@ -1,21 +1,43 @@
-# Integrated workflow: source to directed narration
+# Integrated workflow: source video to rendered lesson
 
-The repository contains two modules joined by a strict narration-byte handoff. Module 1 handles source understanding and clean-script editing through an LLM skill workflow. Module 2 handles structural validation and deterministic voice-direction artifacts through the offline Python CLI.
+The integrated workflow routes among existing tools: source video to clean narration and visual assets, TTS choice and audition, full audio generation, then captions/timing and HyperFrames rendering.
 
 ## Responsibility map
 
-| Stage | Input | Work | Output | What it does not prove/do |
-|---|---|---|---|---|
-| 1. Source to script | Authorized video/audio, slides, or extracted materials | Separate ASR and OCR evidence; review uncertain recognition; create atomic knowledge coverage; rewrite for spoken clarity after fidelity passes | `narration.txt` plus separate source ledger, correction log, coverage matrix, review notes | The repository CLI does not run ASR/OCR, perform LLM correction, validate course facts, or rewrite text. |
-| 2. Voice direction | Frozen UTF-8 narration plus a director map | Check source fingerprint/coverage; produce supported backend draft metadata, lossless chunks, capability reports, or alignment audits | `compiled.json`, `chunks.json`, reports, and manifest under the selected output folder | No TTS API call, audio generation, provider discovery, upload, playback, or human-quality guarantee. |
+| Handoff | Existing component | Result |
+|---|---|---|
+| Source video → narration and visual assets | `courseware-video-remake` workflow | Clean narration and visual assets/storyboard |
+| TTS choice and audition | User plus the selected provider's existing tool | Provider/voice choice; audition accepted under the existing workflow |
+| Narration → final audio | Selected provider's existing TTS tool | Full narration audio |
+| Audio → captions and timing | Existing remake workflow | Captions and scene timing based on final audio |
+| Audio/assets → render and delivery | User's existing HyperFrames project and remake workflow | Rendered lesson and the workflow's existing delivery checks |
 
-Use the [integrated skill](../skills/courseware-pipeline/SKILL.md) to orchestrate both stages. Stage 1 details: [source-to-script skill](../skills/source-to-script/SKILL.md). Optional editorial method: [humanized source rewrite](../skills/humanized-source-rewrite/SKILL.md).
+## Required source-to-speech editorial sequence
 
-## Handoff file contract
+1. Draft from the complete source map, preserving useful content and source order.
+2. The current main harness (usually Codex) personally reviews the completed narration for spoken naturalness, briefly identifies strengths and weaknesses, and performs exactly one bounded polish pass. This is part of every source-to-script run, not an optional extra or delegated worker step. The pass improves spoken syntax, transitions, classroom voice, and unnecessary written-sounding caveats while preserving mapped content. Do not impose a runtime target.
+3. Record the concise assessment and edit summary in private editorial notes. Keep them out of `narration.txt`.
+4. Refresh source-map paragraph references and rerun source-to-draft coverage and draft-to-source integrity after the polish. The independent read-only source-fidelity reviewer checks this polished frozen version; an earlier draft's PASS does not carry forward.
 
-Stage 1 exports a clean copy as UTF-8 `narration.txt`. The file contains only words intended to be spoken. Keep the knowledge ledger and editorial review material in separate files. Store the source video/audio, extracted text, narration, director map, alignment input, and generated reports outside the public repository. An alignment audit can contain recognized narration words, so its output is user content too. For example, from the repository root use a sibling private directory such as `..\courseware-private\`; `.gitignore` also excludes `audit/` and `private-work/` as a safeguard.
+## Required source-fidelity gate
 
-Before creating `director.json`, freeze the exact byte sequence of `narration.txt`:
+When the user wants the original lesson content retained, source-to-script is the first required stage even when the full `courseware-video-remake` workflow is requested. Start from the complete source transcript and preserve its order. A topic or learning-outcome checklist is only an index; it cannot establish that source examples, explanations, exam cues, meaningful repetition, or review prompts survived.
+
+Before drafting, create a private source coverage matrix using [`source-coverage-matrix-template.csv`](../skills/source-to-script/references/source-coverage-matrix-template.csv). Give every numbered SRT segment and every content-bearing item an explicit disposition and a narration reference, or a documented correction/exclusion reason. Keep all useful source content by default. Add explanations and exercises as supplements. Do not use a new hook, a shorter outline, or a style pass to replace mapped source material. When an existing user-edited final is supplied, treat it as the baseline and log any proposed material changes.
+
+A separate read-only reviewer must compare the polished frozen narration and complete source map with the source evidence. Any unmapped or unresolved useful item blocks a source-coverage PASS. If only a topic ledger was checked, report coverage as insufficient.
+
+After any writing or style change, update the source map and repeat the semantic audit against the changed text. Keep the exact audited draft hash in the private audit report so a later edit cannot inherit a stale PASS.
+
+Keep the existing workflow's human checkpoints: confirm source-use permission when it is not already established; get approval before sending source material or narration to a cloud provider or incurring paid generation; and proceed to full TTS only after the user accepts the clean narration and voice audition.
+
+Use the [integrated skill](../skills/courseware-pipeline/SKILL.md) as the routing entry point. It describes which existing skill/tool handles each step; it is not a standalone executable or an automatic connector. The [source-to-script skill](../skills/source-to-script/SKILL.md) and [humanized source rewrite](../skills/humanized-source-rewrite/SKILL.md) remain reusable components of the source-to-narration step.
+
+## Working files
+
+Stage 1 exports a clean copy as UTF-8 `narration.txt`. The file contains only words intended to be spoken. Keep the source map, knowledge index, correction log, coverage matrix, and editorial review material in separate files. Store the source video/audio, extracted text, narration, maps, and reports outside the public repository. An alignment audit can contain recognized narration words, so its output is user content too. For example, from the repository root use a sibling private directory such as `..\courseware-private\`; `.gitignore` also excludes `audit/` and `private-work/` as a safeguard.
+
+Only if Voice Director's optional backend-specific draft is needed, freeze the exact byte sequence of `narration.txt` before creating `director.json`:
 
 ```powershell
 $sha = (Get-FileHash -LiteralPath ..\courseware-private\narration.txt -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -24,15 +46,15 @@ $sha
 
 Set that exact lowercase SHA-256 value as `source_sha256` in `director.json`. The director map's segment offsets count Python Unicode code points in the decoded text. Segments must cover all characters, in order, without gaps or overlaps. Newline conversion, Unicode normalization, or any edit changes the fingerprint and can also invalidate offsets; regenerate the map or review all offsets after a change.
 
-Validate before compiling:
+Run the CLI validation only when using that optional Voice Director path:
 
 ```powershell
 python -m voice_director validate --script ..\courseware-private\narration.txt --director ..\courseware-private\director.json
 ```
 
-The command must return `"valid": true`. A mismatch fails closed. The compilation/chunking manifest records the same input script hash, and reports `provider_calls: 0` and `network_access: false`.
+The command must return `"valid": true`. Hash validation is optional and applies only when using Voice Director; it does not generate TTS audio.
 
-## Typical Stage 2 commands
+## Optional Voice Director commands
 
 ```powershell
 python -m voice_director --help
@@ -42,14 +64,8 @@ python -m voice_director chunk --script ..\courseware-private\narration.txt --di
 python -m voice_director alignment-audit --script ..\courseware-private\narration.txt --alignment ..\courseware-private\whisperx.json --out ..\courseware-private\audit
 ```
 
-See [README.md](../README.md) for director map fields, backend capability semantics, and the offline test command.
-
-## Quality gates
-
-Stage 1 independently reports extraction coverage, atomic source-to-script coverage, factual/attribution integrity, natural spoken delivery, clean-copy readiness, and unresolved evidence. A high-level outline is not proof of full coverage, and uncertain ASR must not be silently guessed.
-
-Stage 2 structurally validates the director map, exact source hash, and segment coverage. Compile and alignment reports establish only the checks stated in those reports. They do not prove the script is accurate, TTS sounds natural, a service supports a control today, or final audio matches the text.
+See [README.md](../README.md) for director map fields, backend capability semantics, and the offline test command. The chosen provider's existing TTS tool and the existing HyperFrames project handle audio generation and video rendering.
 
 ## Security and reuse boundary
 
-Do not place source-course material, private transcripts, media, narration, director maps, alignment inputs/reports, credentials, or unrelated personal artifacts in the repository. Keep user content in a private work directory outside the clone; the ignore rules for `audit/` and `private-work/` are only a secondary safeguard. The skill folders are not auto-registered by a clone: manually copy `courseware-pipeline`, `source-to-script`, and `humanized-source-rewrite` together into the Codex skills directory, preserving sibling paths and references. No provider requests or uploads are part of these modules. This repository has no license file; public visibility alone does not grant reuse rights.
+Do not place source-course material, private transcripts, media, narration, TTS audio, credentials, or unrelated personal artifacts in the repository. The chosen TTS tool may send narration to its provider under that tool's existing data-use behavior. The skill folders are not auto-registered by a clone: install `courseware-pipeline`, `source-to-script`, and `humanized-source-rewrite` together, preserving sibling paths and references. This repository has no license file; public visibility alone does not grant reuse rights.

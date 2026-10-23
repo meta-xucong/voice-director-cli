@@ -6,9 +6,10 @@ Integrate the generic source-video-to-clean-narration workflow and the existing 
 
 ## Scope and non-goals
 
-- Module A: generic, LLM-assisted workflow for video/source inspection, separate ASR and OCR evidence, uncertainty-aware correction, complete source-indexed knowledge coverage, natural speech rewrite, and clean narration output.
+- Module A: generic, LLM-assisted workflow for video/source inspection, separate ASR and OCR evidence, uncertainty-aware correction, complete source-indexed item coverage, natural speech rewrite, and clean narration output. Source fidelity is established by mapping the complete source and independently reviewing the frozen narration against it.
 - Module B: existing offline Python CLI for validating locked narration plus director map, compiling supported backend drafts, lossless chunking, and alignment audit.
 - Handoff: narration UTF-8 bytes are frozen by SHA-256; the voice module's `director.json.source_sha256` must equal that hash. No normalization is permitted.
+- Every source-to-script run includes one final spoken-delivery assessment and bounded polish performed by the current main harness after drafting; notes remain outside narration, and source mapping plus independent semantic review are refreshed against the polished frozen text.
 - The repository may describe the combined workflow as an integrated project, but must state clearly that Module A is executed through an LLM/skill workflow, while the Python CLI does not perform ASR/OCR, semantic correction, rewriting, or TTS synthesis.
 - Do not include any course-specific source transcript, media, outputs, user data, secrets, machine-specific paths, or unrelated personal workflow artifacts.
 - Do not add a software license. Preserve the user's choice that the repository is public for viewing without a license grant.
@@ -37,7 +38,7 @@ Allow generic integration docs and skill files, tests for the handoff contract, 
 ## Acceptance evidence
 
 1. Written module architecture, operator workflow, limits, and handoff contract.
-2. Source mapping demonstrates all material source-skill requirements are represented without adding source-specific data.
+2. Source-to-script starts from a complete segment-indexed source map; a topic ledger alone cannot pass source-fidelity review.
 3. Automated tests verify clean handoff and reject wrong/stale narration hashes.
 4. Existing and added deterministic tests pass offline.
 5. Separate general audit and source-fidelity audit both return PASS against the same frozen revision; all findings are resolved and re-audited.
