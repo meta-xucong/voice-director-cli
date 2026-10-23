@@ -7,23 +7,48 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from voice_director.errors import HumanReviewRequired, ValidationError
-from voice_director.visual_gate import validate_visual_gate
+from voice_director.visual_gate import validate_visual_gate as _validate_visual_gate
+from tests.visual_quality_fixtures import (VIDEO_PROBE, fake_image_pixels, fake_video_frames,
+                                           direction_data, make_quality_review, png, sha, write_json)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def manifest(directory):
+    quality, quality_path, quality_hash, project_root, inventory, voice_map, asset_path = make_quality_review(directory)
     options = []
     for index in range(1, 4):
         filename = f"option-{index}.png"
-        content = b"\x89PNG\r\n\x1a\n" + f"visual option {index}".encode()
+        content = direction_data(index)
         (directory / filename).write_bytes(content)
         options.append({"id": str(index), "title": f"Direction {index}", "image_file": filename,
-                        "sha256": hashlib.sha256(content).hexdigest()})
-    return {"schema_version": 1, "options": options, "selected_option_id": None}
+                        "sha256": sha(content)})
+    return {"schema_version": 2,
+            "asset_review": {"manifest_file": asset_path.name, "manifest_sha256": sha(asset_path.read_bytes()),
+                             "narration_file": "narration.txt", "narration_sha256": sha((directory / "narration.txt").read_bytes()),
+                             "voice_screen_map_file": "voice-screen-map.json", "voice_screen_map_sha256": sha((directory / "voice-screen-map.json").read_bytes())},
+            "options": options, "selected_option_id": None, "design_sample": None}
+
+
+def add_sample(payload, directory, decision="pending"):
+    data = (directory / "design-sample.mp4").read_bytes()
+    quality_path = directory / "sample-quality.json"
+    payload["design_sample"] = {"video_file": "design-sample.mp4", "sha256": sha(data),
+                                "based_on_option_id": payload["selected_option_id"],
+                                "quality_review_file": quality_path.name, "quality_review_sha256": sha(quality_path.read_bytes()),
+                                "decision_status": decision}
+    return payload
+
+
+def validate_visual_gate(payload, base_dir):
+    with patch("voice_director.visual_quality._probe_video", return_value=VIDEO_PROBE), \
+            patch("voice_director.visual_quality._extract_video_rgb", side_effect=fake_video_frames), \
+            patch("voice_director.visual_quality._decode_image_rgb", side_effect=fake_image_pixels):
+        return _validate_visual_gate(payload, base_dir, project_root=Path(base_dir) / "hyperframes-project")
 
 
 def fake_mp4(label=b"sample"):
@@ -90,26 +115,29 @@ class VisualGateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             payload = manifest(root)
-            payload["selected_option_id"] = "3"
-            data = fake_mp4()
-            (root / "design-sample.mp4").write_bytes(data)
-            payload["design_sample"] = {"video_file": "design-sample.mp4", "sha256": hashlib.sha256(data).hexdigest(),
-                                        "based_on_option_id": "3",
-                                        "decision_status": "pending"}
+            payload["selected_option_id"] = "1"
+            add_sample(payload, root)
             with self.assertRaises(HumanReviewRequired) as raised:
                 validate_visual_gate(payload, root)
         self.assertEqual(raised.exception.report["gate"], "approve_design_sample")
         self.assertIn("do not render the full lesson", raised.exception.report["instruction"])
+
+    def test_sample_quality_must_bind_the_selected_direction_image_hash(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            payload = manifest(root)
+            payload["selected_option_id"] = "2"
+            add_sample(payload, root)
+            with self.assertRaisesRegex(ValidationError, "must bind the option the user selected"):
+                validate_visual_gate(payload, root)
 
     def test_sample_must_reference_the_selected_visual_direction(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             payload = manifest(root)
             payload["selected_option_id"] = "3"
-            data = fake_mp4()
-            (root / "design-sample.mp4").write_bytes(data)
-            payload["design_sample"] = {"video_file": "design-sample.mp4", "sha256": hashlib.sha256(data).hexdigest(),
-                                        "based_on_option_id": "2", "decision_status": "approved"}
+            add_sample(payload, root, "approved")
+            payload["design_sample"]["based_on_option_id"] = "2"
             with self.assertRaisesRegex(ValidationError, "must match selected_option_id"):
                 validate_visual_gate(payload, root)
 
@@ -117,12 +145,9 @@ class VisualGateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             payload = manifest(root)
-            payload["selected_option_id"] = "3"
-            data = fake_mp4()
-            (root / "design-sample.mp4").write_bytes(data)
-            payload["design_sample"] = {"video_file": "design-sample.mp4", "sha256": hashlib.sha256(data).hexdigest(),
-                                        "based_on_option_id": "3",
-                                        "decision_status": "revision_requested", "feedback": "The labels feel crowded."}
+            payload["selected_option_id"] = "1"
+            add_sample(payload, root, "revision_requested")
+            payload["design_sample"]["feedback"] = "The labels feel crowded."
             with self.assertRaises(HumanReviewRequired) as raised:
                 validate_visual_gate(payload, root)
         self.assertEqual(raised.exception.report["gate"], "revise_design_sample")
@@ -135,7 +160,9 @@ class VisualGateTests(unittest.TestCase):
             payload["selected_option_id"] = "3"
             data = (root / "option-3.png").read_bytes()
             payload["design_sample"] = {"video_file": "option-3.png", "sha256": hashlib.sha256(data).hexdigest(),
-                                        "based_on_option_id": "3", "decision_status": "approved"}
+                                        "based_on_option_id": "3", "quality_review_file": "sample-quality.json",
+                                        "quality_review_sha256": sha((root / "sample-quality.json").read_bytes()),
+                                        "decision_status": "approved"}
             with self.assertRaisesRegex(ValidationError, "MP4-family video"):
                 validate_visual_gate(payload, root)
 
@@ -143,12 +170,8 @@ class VisualGateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             payload = manifest(root)
-            payload["selected_option_id"] = "3"
-            data = fake_mp4()
-            (root / "design-sample.mp4").write_bytes(data)
-            payload["design_sample"] = {"video_file": "design-sample.mp4", "sha256": hashlib.sha256(data).hexdigest(),
-                                        "based_on_option_id": "3",
-                                        "decision_status": "approved"}
+            payload["selected_option_id"] = "1"
+            add_sample(payload, root, "approved")
             report = validate_visual_gate(payload, root)
         self.assertEqual(report["status"], "PASS")
         self.assertEqual(report["gate"], "full_lesson_render_allowed")

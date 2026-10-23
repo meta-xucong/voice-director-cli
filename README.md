@@ -9,13 +9,15 @@ The editorial gate validates a private evidence bundle and copies candidate byte
 
 For courseware visuals, the integrated skill searches the Internet before requesting images, then has the main harness assess each retained candidate against every voice/screen beat for teaching fit, factual match, legibility, UI authenticity, and rights/provenance. If no candidate is suitable after the required search coverage, or evidence leaves a concrete uncertainty, it presents the actual evidence and a specific image request or decision question in the conversation. The offline CLI checks the review packet's hashes, paths, evidence coverage, and completeness; it does not search the Internet or decide semantic suitability.
 
+The visual workflow then presents three distinct design directions for user selection, builds a 20–60 second representative HyperFrames sample, and runs a hash-bound quality review before asking for sample approval. The quality review checks FFprobe metadata, the complete render-project inventory, FFmpeg pixel equality for sampled frames, the selected direction image, screenshot crop/upscale limits, annotation alignment, motion stability, readability and polish findings. After explicit approval of that exact sample, the same gate requires a full-video review covering every beat before delivery. The CLI checks evidence and measurements; the harness inspects actual visuals and playback, and unresolved uncertainty is shown in the conversation for the user to decide. This is a workflow gate and does not intercept direct HyperFrames render commands. See [the quality-gate contract and commands](docs/VISUAL-QUALITY-GATE.md).
+
 ## Install with Codex
 
 Ask Codex: “Read `https://github.com/meta-xucong/voice-director-cli`, follow its [INSTALL.md](INSTALL.md), and install the project and its Codex skills on this computer.” The guide explains the clone location, and [the setup script](scripts/install.ps1) installs the related skills, checks Python 3.12, and runs the offline tests. It uses WinGet to install Python only when Python 3.12 is missing. The project has no pip dependencies.
 
 The `skills/` entries are plain skill files in this repository; cloning it does not register them with Codex. Use the installer above to place the four related folders in your Codex skills directory while preserving their sibling structure and the rewrite skill's `references/` folder. Keep course inputs, narration, director maps, and generated reports outside this public repository. Alignment reports can contain recognized narration words; use a private work directory such as a sibling `courseware-private` folder. The `.gitignore` entries are an extra safeguard, not a substitute for keeping user material outside the repository.
 
-This standard-library-only tool is offline: it does not install or load models, call TTS APIs, upload text, edit audio, or rewrite the narration.
+The Python package uses only the standard library and remains offline: it does not install or load models, call TTS APIs, upload text, edit audio, or rewrite the narration. The courseware video quality gate additionally needs FFmpeg's `ffprobe` and `ffmpeg` executables on `PATH` or provided with `--ffprobe` and `--ffmpeg`; the installer does not install FFmpeg.
 
 Run commands from this directory with Python 3.12:
 

@@ -6,7 +6,7 @@ The courseware workflow must search the Internet for visual assets before asking
 
 The change extends the in-progress visual direction/sample workflow without replacing it. It adds a private evidence manifest and an offline CLI gate that validates completeness, hash continuity, provenance declarations, review coverage, and the stated decision. Internet search, image selection, semantic assessment, and conversation display remain harness responsibilities; the CLI must not claim to have performed them.
 
-Non-goals: implement a network image-search or downloading client; call an image-generation service; decide semantic fit automatically; change rendering or the existing three-style/sample approval gate; put course assets or user content in the public repository.
+Non-goals: implement a network image-search or downloading client; call an image-generation service; decide semantic fit automatically; change rendering; put course assets or user content in the public repository. The visual-quality gate extends the three-style/sample approval workflow with hash-bound quality checks; it does not replace harness review or user approval.
 
 Baseline: branch `editorial-gate-20261023`, HEAD `cb7a37f`; pre-existing working changes in `docs/PIPELINE.md`, `skills/courseware-pipeline/SKILL.md`, `voice_director/cli.py`, plus untracked `voice_director/visual_gate.py` and `tests/test_visual_gate.py` are retained as task baseline and are in scope only as needed to integrate the new stage. No other pre-existing changes may be overwritten.
 

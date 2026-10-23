@@ -18,6 +18,7 @@ from .schema import load_inputs, read_json, read_script, sha256_bytes
 from .voice_screen import validate_voice_screen_map
 from .visual_asset_review import load_and_validate_visual_asset_review
 from .visual_gate import validate_visual_gate
+from .visual_quality import load_and_validate_visual_quality_review
 
 
 def _json_bytes(data):
@@ -205,11 +206,18 @@ def _command_voice_screen(args):
 
 def _command_visual_gate(args):
     payload, _ = read_json(args.manifest)
-    return validate_visual_gate(payload, Path(args.manifest).resolve().parent), 0
+    return validate_visual_gate(payload, Path(args.manifest).resolve().parent,
+                                project_root=args.project_root, ffprobe_path=args.ffprobe,
+                                ffmpeg_path=args.ffmpeg), 0
 
 
 def _command_review_visual_assets(args):
     return load_and_validate_visual_asset_review(args.manifest, args.narration, args.map), 0
+
+
+def _command_review_visual_quality(args):
+    return load_and_validate_visual_quality_review(args.manifest, project_root=args.project_root,
+                                                    ffprobe_path=args.ffprobe, ffmpeg_path=args.ffmpeg), 0
 
 
 def build_parser():
@@ -257,6 +265,9 @@ def build_parser():
 
     visual_gate = subparsers.add_parser("visual-gate", help="require user selection of one of three visual directions and approval of its design sample")
     visual_gate.add_argument("--manifest", required=True, help="private visual-gate.json path")
+    visual_gate.add_argument("--project-root", help="HyperFrames project directory; required when validating a design sample")
+    visual_gate.add_argument("--ffprobe", help="FFprobe executable; defaults to ffprobe on PATH")
+    visual_gate.add_argument("--ffmpeg", help="FFmpeg executable; defaults to ffmpeg on PATH")
     visual_gate.set_defaults(handler=_command_visual_gate)
 
     asset_review = subparsers.add_parser("review-visual-assets", help="validate Internet search evidence and the harness's per-beat visual suitability review")
@@ -264,6 +275,13 @@ def build_parser():
     asset_review.add_argument("--narration", required=True, help="exact private narration.txt used for the review")
     asset_review.add_argument("--map", required=True, help="private voice-screen-map.json path")
     asset_review.set_defaults(handler=_command_review_visual_assets)
+
+    visual_quality = subparsers.add_parser("review-visual-quality", help="probe and validate private sample/final-video quality evidence")
+    visual_quality.add_argument("--manifest", required=True, help="private visual-quality-review.json path")
+    visual_quality.add_argument("--project-root", required=True, help="HyperFrames project root whose file inventory is hash-checked")
+    visual_quality.add_argument("--ffprobe", help="FFprobe executable; defaults to ffprobe on PATH")
+    visual_quality.add_argument("--ffmpeg", help="FFmpeg executable; defaults to ffmpeg on PATH")
+    visual_quality.set_defaults(handler=_command_review_visual_quality)
 
     capabilities = subparsers.add_parser("capabilities", help="show frozen, declared backend capability profiles")
     capabilities.add_argument("--backend")
