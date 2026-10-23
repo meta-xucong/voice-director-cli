@@ -30,4 +30,6 @@ Use this as the editorial method within `source-to-script`, or independently for
 9. Once narration is accepted, freeze its text during TTS tuning. Keep emotion, emphasis, pace, and pauses in the separate prosody map unless wording changes are approved.
 10. Assess coverage, claim integrity, audience/genre fit, repetition/function, delivery readiness, and unresolved evidence independently. Do not infer one pass from another.
 
+When this skill is used within `source-to-script`, the current main harness must perform one final spoken-delivery assessment and one bounded polish pass after the source-faithful draft is complete. Preserve all mapped information, then refresh the source map and semantic review for the polished text. Keep the assessment and edit summary outside the spoken copy. See the required final-pass procedure in `../source-to-script/SKILL.md`.
+
 Consult [the editing playbook](references/editing-playbook.md) for Chinese prose cues and genre-specific review prompts. Treat cues as questions, not automatic bans. Do not use detector scores or word-count changes as evidence of naturalness or quality.

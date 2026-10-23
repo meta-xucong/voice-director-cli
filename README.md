@@ -1,11 +1,11 @@
 # Source-to-Voice Courseware Pipeline
 
-This repository now documents two independent modules for turning authorized lesson source material into voice-directed narration:
+This repository provides source-to-narration guidance and offline voice-direction tools. For the full flow, use the [integrated pipeline skill](skills/courseware-pipeline/SKILL.md) as the routing entry: it reuses `courseware-video-remake`, gets the TTS choice, follows that workflow's narration and voice-audition acceptance points, then hands off to the selected existing TTS tool and the user's HyperFrames project. This repository does not add a second renderer or a new orchestration engine.
 
-1. **Source to clean narration** is an LLM/skill workflow for separate ASR/OCR evidence, uncertainty-aware correction, complete knowledge coverage, and a natural spoken rewrite. Start with [the integrated pipeline skill](skills/courseware-pipeline/SKILL.md) or the [source-to-script module](skills/source-to-script/SKILL.md).
+1. **Source to clean narration** is an LLM/skill workflow for separate ASR/OCR evidence, uncertainty-aware correction, complete source-segment coverage, and a natural spoken rewrite. After drafting, the current main harness personally assesses and polishes the spoken copy once, then a separate reviewer checks that polished frozen narration against the complete source map; a topic list alone cannot pass. Start with [the integrated pipeline skill](skills/courseware-pipeline/SKILL.md) or the [source-to-script module](skills/source-to-script/SKILL.md).
 2. **Voice direction** is the deterministic, offline Python CLI described below. It validates a locked UTF-8 narration script and director map, prepares backend-specific draft artifacts, builds lossless chunks, and audits word-alignment JSON.
 
-The shared handoff freezes the narration bytes and verifies `director.json.source_sha256` against the exact UTF-8 script. See [the full pipeline contract and operating steps](docs/PIPELINE.md). The CLI does not run ASR/OCR, perform LLM correction or rewriting, generate audio, call TTS services, or upload content.
+The exact-byte hash handoff applies only when the optional Voice Director CLI is used. The pipeline skill is a routing guide that reuses installed skills and tools; it is not a standalone automation executable. The existing remake workflow can still require source-use permission, approval before cloud transfer or paid generation, and acceptance of the narration and voice audition. See [the chained workflow and handoffs](docs/PIPELINE.md). The CLI does not run ASR/OCR, perform LLM correction or rewriting, generate audio, call TTS services, or upload content.
 
 ## Install with Codex
 
