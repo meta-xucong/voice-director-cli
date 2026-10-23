@@ -7,6 +7,8 @@ This repository provides source-to-narration guidance and offline voice-directio
 
 The editorial gate validates a private evidence bundle and copies candidate bytes exactly; legacy `validate`/`compile` commands remain separate voice-direction tools and are not a narration release signal. If a final review contains only typed `INSUFFICIENT_EVIDENCE` uncertainties, the gate displays a human decision packet and blank template. The user may explicitly accept residual uncertainty, with a distinct receipt status that preserves the original review verdict. It never guesses or defaults to approval. The pipeline skill is a routing guide that reuses installed skills and tools; it is not a standalone automation executable. The existing remake workflow can still require source-use permission, approval before cloud transfer or paid generation, and acceptance of the narration and voice audition. See [the chained workflow and handoffs](docs/PIPELINE.md). The CLI does not run ASR/OCR, perform LLM correction or rewriting, judge semantic quality, generate audio, call TTS services, or upload content.
 
+For courseware visuals, the integrated skill searches the Internet before requesting images, then has the main harness assess each retained candidate against every voice/screen beat for teaching fit, factual match, legibility, UI authenticity, and rights/provenance. If no candidate is suitable after the required search coverage, or evidence leaves a concrete uncertainty, it presents the actual evidence and a specific image request or decision question in the conversation. The offline CLI checks the review packet's hashes, paths, evidence coverage, and completeness; it does not search the Internet or decide semantic suitability.
+
 ## Install with Codex
 
 Ask Codex: “Read `https://github.com/meta-xucong/voice-director-cli`, follow its [INSTALL.md](INSTALL.md), and install the project and its Codex skills on this computer.” The guide explains the clone location, and [the setup script](scripts/install.ps1) installs the related skills, checks Python 3.12, and runs the offline tests. It uses WinGet to install Python only when Python 3.12 is missing. The project has no pip dependencies.
@@ -25,6 +27,7 @@ python -m voice_director capabilities
 python -m voice_director compile --script ..\courseware-private\narration.txt --director ..\courseware-private\director.json --backend eleven_v4 --out ..\courseware-private\out
 python -m voice_director chunk --script ..\courseware-private\narration.txt --director ..\courseware-private\director.json --backend f5 --max-chars 1200 --out ..\courseware-private\out
 python -m voice_director alignment-audit --script ..\courseware-private\narration.txt --alignment ..\courseware-private\whisperx.json --out ..\courseware-private\audit
+python -m voice_director review-visual-assets --manifest ..\courseware-private\visual-asset-review.json --narration ..\courseware-private\narration.txt --map ..\courseware-private\voice-screen-map.json
 ```
 
 Use `--overwrite` only when replacing artifacts in the chosen output directory. All generated files use fixed filenames under `--out`; input files are read-only. Each generated manifest records input and artifact hashes, `provider_calls: 0`, and `network_access: false`.

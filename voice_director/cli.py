@@ -16,6 +16,7 @@ from .editorial_gate import release as release_editorial_bundle
 from .profiles import get_license_review, get_profile, list_profiles
 from .schema import load_inputs, read_json, read_script, sha256_bytes
 from .voice_screen import validate_voice_screen_map
+from .visual_asset_review import load_and_validate_visual_asset_review
 from .visual_gate import validate_visual_gate
 
 
@@ -207,6 +208,10 @@ def _command_visual_gate(args):
     return validate_visual_gate(payload, Path(args.manifest).resolve().parent), 0
 
 
+def _command_review_visual_assets(args):
+    return load_and_validate_visual_asset_review(args.manifest, args.narration, args.map), 0
+
+
 def build_parser():
     parser = argparse.ArgumentParser(prog="voice-director", description="Validate, release reviewed narration, and compile offline voice-direction artifacts; never calls TTS providers.")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -253,6 +258,12 @@ def build_parser():
     visual_gate = subparsers.add_parser("visual-gate", help="require user selection of one of three visual directions and approval of its design sample")
     visual_gate.add_argument("--manifest", required=True, help="private visual-gate.json path")
     visual_gate.set_defaults(handler=_command_visual_gate)
+
+    asset_review = subparsers.add_parser("review-visual-assets", help="validate Internet search evidence and the harness's per-beat visual suitability review")
+    asset_review.add_argument("--manifest", required=True, help="private visual-asset-review.json path")
+    asset_review.add_argument("--narration", required=True, help="exact private narration.txt used for the review")
+    asset_review.add_argument("--map", required=True, help="private voice-screen-map.json path")
+    asset_review.set_defaults(handler=_command_review_visual_assets)
 
     capabilities = subparsers.add_parser("capabilities", help="show frozen, declared backend capability profiles")
     capabilities.add_argument("--backend")

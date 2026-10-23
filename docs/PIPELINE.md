@@ -22,6 +22,20 @@ python -m voice_director validate-voice-screen --map ..\courseware-private\voice
 
 The validator checks the declared structure, summary-versus-syntax separation, source labels, long-hold reasons, and common credential patterns. It cannot verify semantic truth, rights, natural delivery, or final synchronization. If `uncertainty` is present, the command returns `AWAITING_HUMAN` and prints the question, evidence, impact, and recommendation. Show that exact packet in the conversation and wait for the user's explicit decision before approving the affected visual or narration. Then update the private map and validate again. Keep this material outside the public repository.
 
+## Internet asset search and harness suitability review
+
+Before requesting an image from the user, search the Internet for each visual need. Use multiple distinct query variants where needed, open the source pages, and inspect the actual candidate images rather than relying on search snippets. Record the queries and timestamps, source URLs, candidate IDs and files, SHA-256 hashes, dimensions, and rights/provenance evidence in a private `visual-asset-review.json`. Keep source media and review artifacts outside the public repository. A generic illustration must never be labeled or presented as a genuine product screenshot.
+
+After searching, the main harness reviews every candidate against every voice/screen beat. For each candidate, document teaching relevance, visual/factual match, readability at the intended display size, authenticity when a real interface is required, and rights/provenance. Record evidence, strengths, limitations, learner impact, and a reasoned disposition; self-assess the completeness of the review. A candidate is adequate only when all applicable criteria pass. If no candidate fits, perform at least three distinct query variants for that beat, assess all inspected candidates, and state the precise visual gap and learner impact before asking the user for an image. If source, authenticity, rights, or fit evidence remains uncertain, show the concrete uncertainty, evidence, impact, and recommendation as a separate human decision item in the conversation. Wait for the user's decision or supplied image before proceeding.
+
+Validate the private evidence packet locally:
+
+```powershell
+python -m voice_director review-visual-assets --manifest ..\courseware-private\visual-asset-review.json --narration ..\courseware-private\narration.txt --map ..\courseware-private\voice-screen-map.json
+```
+
+The offline validator checks input and asset hashes, private path containment, search coverage, candidate-to-beat consistency, review completeness, and conservative decision consistency. It does not perform Internet search, inspect source pages, establish reuse rights, or prove semantic suitability; those are harness responsibilities. When the result is `AWAITING_HUMAN`, show its exact evidence and question in the conversation and stop the affected visual work until the user decides. The complete manifest contract is in [VISUAL-ASSET-REVIEW.md](VISUAL-ASSET-REVIEW.md).
+
 ## Mandatory visual direction and design-sample gate
 
 Before rendering a full lesson, prepare exactly three independent visual direction images for one representative passage. The options must differ in overall hierarchy, palette, and layout while keeping the same teaching content. Show the three actual images in the conversation and wait for the user to choose one. Do not render the design sample or full lesson while selection is pending.
