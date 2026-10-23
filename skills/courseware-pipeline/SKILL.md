@@ -9,34 +9,108 @@ metadata:
 
 Use this skill as the routing entry for the complete workflow. It reuses the existing `courseware-video-remake` skill for source understanding, narration, visuals, voice, captions, and HyperFrames production; it does not itself call those tools. The planned routine choice is the TTS provider/voice. Keep the existing workflow's source-use permission, cloud-transfer/cost authorization, and narration/voice-audition acceptance points when they apply. Do not build another ASR, rewrite, TTS, compositor, or orchestration implementation.
 
-The skill files in this repository are not automatically registered with Codex. Run `scripts/install.ps1` from the repository root or follow the [repository installation guide](https://github.com/meta-xucong/voice-director-cli/blob/main/INSTALL.md) to install the four related Skills together, preserving their sibling structure and the rewrite skill's `references/` folder. Keep source media, extracted text, narration, director maps, and generated reports in a private work directory outside the public repository; alignment reports can contain narration words.
+The skill files in this repository are not automatically registered with Codex. Run `scripts/install.ps1` from the repository root or follow the [repository installation guide](https://github.com/meta-xucong/voice-director-cli/blob/main/INSTALL.md) to install the four related Skills together, preserving theïŽ=¶‰žËkºwµçstr) or not value.strip():
+        raise ValidationError(f"{label} must be a non-empty string")
 
-## Source-faithful end-to-end chain
 
-1. Before writing a new narration from source, run `../source-to-script/SKILL.md` as the required content-preservation stage. Build the complete source map and draft in source order. The current main harness assesses spoken delivery and repeats bounded revision rounds until its self-evaluation passes. A distinct reviewer checks the exact candidate against complete source evidence and map. Any non-passing finding returns to the harness for revision, map refresh, and fresh review. Release only after every content-bearing source item is accounted for or has a justified disposition; the core-topic ledger alone is not enough. Run the `editorial-gate` command and pass only its `release/narration.txt` downstream. Keep assessment and edit evidence outside narration.
-2. Give the accepted, locked narration to `courseware-video-remake` for its existing courseware, visual, voice, caption, and render work. It may improve presentation, but it must keep mapped source content; any text edit requires rechecking the source map. If the user already has a manually edited final, use it as the baseline and do not replace its structure or examples without instruction.
-3. Ask for the TTS provider/voice if it is not already specified. Create the voice audition required by that workflow and proceed to full generation after the user accepts the narration and audition, following existing external-transfer and cost approval rules.
-4. Before building detailed visuals, create a private `voice-screen-map.json` with the beat-by-beat spoken line, exact display text, source-attributed assets, focus, duration, and transition. Keep JSON, code, commands, paths, and exact config values on screen; have narration explain purpose, order, risk, and verification. Read syntax aloud only when the learner must hear its exact pronunciation, and record why. Run `python -m voice_director validate-voice-screen --map <private-voice-screen-map.json>`; this is a structural safeguard, not a semantic or synchronization review.
-5. Use the final voice audio for captions and scene timing, then pass audio, narration, captions, and visuals to the existing HyperFrames project for composition and rendering. Prefer meaningful 3â€“10 second visual beats, use longer holds only when the screen needs reading time, and record entry/exit transitions plus focal motion in the map. Use the project's GSAP/HyperFrames capabilities for fades, controlled push/zoom, pan, and highlights; do not add a competing renderer. Use Voice Director only if the selected backend benefits from its existing offline direction or chunking features.
+def _verify_private_asset(base_dir, item, label, field):
+    raw_path = item.get(field)
+    if not isinstance(raw_path, str) or not raw_path.strip():
+        raise ValidationError(f"{label}.{field} must be a relative path inside the private run directory")
+    relative = Path(raw_path)
+    if relative.is_absolute() or ".." in relative.parts:
+        raise ValidationError(f"{label}.{field} must be a relative path inside the private run directory")
+    expected = item.get("sha256")
+    if not isinstance(expected, str) or not _SHA256.fullmatch(expected):
+        raise ValidationError(f"{label}.sha256 must be a lowercase SHA-256 value")
+    path = (base_dir / relative).resolve()
+    root = base_dir.resolve()
+    if root not in path.parents:
+        raise ValidationError(f"{label}.{field} escapes the private run directory")
+    try:
+        data = path.read_bytes()
+    except OSError as exc:
+        raise ValidationError(f"{label}.{field} cannot be read: {exc}") from exc
+    actual = hashlib.sha256(data).hexdigest()
+    if actual != expected:
+        raise ValidationError(f"{label}.{field} SHA-256 does not match the manifest")
+    return relative.as_posix(), path, data
 
-If the user requests only clean narration, use `../source-to-script/SKILL.md` and stop there. If they supply approved narration, skip source-to-script work and continue at step 2. Keep intermediate files in the remake workflow's private work folder. This is skill-level routing, not a standalone one-click executable; actual execution depends on the installed skills, provider tools, and HyperFrames project.
 
-## Required handoff
+def validate_visual_gate(payload, base_dir):
+    """Validate the three-option selection and selected design-sample approval gate.
 
-- The source-to-script step produces UTF-8 `narration.txt` containing only spoken copy. Keep source ledger, correction log, coverage matrix, and editorial notes in separate files.
-- Treat `python -m voice_director editorial-gate --bundle <private-run-directory> --out <new-release-directory>` as the required source-to-script release gate. The legacy `validate` and `compile` commands do not satisfy it; the gate validates bound evidence and exact-byte release, not semantic quality or truth of role claims.
-- If the gate reports `AWAITING_HUMAN`, show its source/narration references, evidence, question, impact, recommendation, and blank decision template to the user. Wait for an explicit decision. Never infer acceptance from silence. An `accept_as_is` decision produces `RELEASED_WITH_HUMAN_DECISIONS`; revision/evidence requests stay blocked until fresh review. The receipt keeps the original independent-review verdict and records the decision hash.
-- Only when Voice Director is useful, freeze narration bytes and prepare its existing `director.json` handoff. The CLI writes offline draft artifacts; it does not synthesize speech or contact providers.
-- Give the selected TTS tool the approved narration and any prepared voice-direction text. After audio generation, pass the audio, narration, visuals, and audio-timed captions to HyperFrames; do not recreate its scene or render logic here.
+    This is a local structural and hash check. It does not generate visuals, judge
+    design quality, or render the final lesson.
+    """
+    if not isinstance(payload, dict) or payload.get("schema_version") != 1:
+        raise ValidationError("visual gate schema_version must be 1")
+    options = payload.get("options")
+    if not isinstance(options, list) or len(options) != 3:
+        raise ValidationError("visual gate requires exactly three independently generated options")
 
-## Boundaries
+    option_ids = set()
+    option_paths = set()
+    option_hashes = set()
+    option_report = []
+    for index, option in enumerate(options, 1):
+        prefix = f"options[{index}]"
+        if not isinstance(option, dict):
+            raise ValidationError(f"{prefix} must be an object")
+        option_id = option.get("id")
+        _text(option_id, f"{prefix}.id")
+        if option_id in option_ids:
+            raise ValidationError(f"duplicate visual option id: {option_id}")
+        option_ids.add(option_id)
+        _text(option.get("title"), f"{prefix}.title")
+        asset_path, resolved_path, image_data = _verify_private_asset(base_dir, option, prefix, "image_file")
+        signature_check = _IMAGE_SIGNATURES.get(resolved_path.suffix.lower())
+        if signature_check is None or not signature_check(image_data):
+            raise ValidationError(f"{prefix}.image_file must be a PNG, JPEG, or WebP image with a matching file signature")
+        resolved_key = str(resolved_path).casefold()
+        if resolved_key in option_paths or option["sha256"] in option_hashes:
+            raise ValidationError("the three visual options must use distinct image files and content hashes")
+        option_paths.add(resolved_key)
+        option_hashes.add(option["sha256"])
+        option_report.append({"id": option_id, "title": option["title"], "image_file": asset_path,
+                              "sha256": option["sha256"]})
 
-- Keep ASR/OCR evidence, confidence judgments, and correction notes outside the spoken script.
-- Preserve the complete technical detail in on-screen text even when the voice uses a concise explanation. Label exact examples as examples, keep credentials out of screen text, and use placeholders such as `YOUR_API_KEY`. A real product UI capture must be genuine and labeled with its product/version/device context; an official feature illustration or an original card must be labeled as such, never presented as a screenshot.
-- If the source, interface type, product capability, asset provenance, or required narration detail is uncertain, put the exact question, observed evidence, learner impact, and recommendation in `uncertainty` on the affected beat. The validator returns `AWAITING_HUMAN`; show that packet in the conversation and wait for the user's explicit decision before treating the beat as approved. Do not hide the uncertainty in internal notes.
-- Keep source evidence and editing notes separate from spoken narration. Do not create a second ASR, rewrite, or renderer. Complete source mapping and independent editorial fidelity review are required within `source-to-script`, not optional additions to the production workflow.
-- Do not claim complete source coverage when extraction or review was partial.
-- The CLI cannot establish transcript accuracy, factual correctness, natural TTS delivery, provider behavior, publication rights, or audio/video synchronization.
-- This repository has no software license. Its public visibility does not grant reuse rights.
+    selected = payload.get("selected_option_id")
+    if selected is None:
+        report = {"schema_version": 1, "status": "AWAITING_HUMAN", "gate": "select_visual_direction",
+                  "options": option_report,
+                  "question": "Which of the three visual directions should guide the design sample?",
+                  "instruction": "Show all three option images in the conversation and wait for the user's explicit selection before rendering the design sample or full lesson."}
+        raise HumanReviewRequired(report)
+    if selected not in option_ids:
+        raise ValidationError("selected_option_id must match one of the three option ids")
 
-For end-to-end commands and file layout, see the [pipeline guide](https://github.com/meta-xucong/voice-director-cli/blob/main/docs/PIPELINE.md). The installed skill directory is not the CLI checkout. Locate your repository clone, confirm `git remote get-url origin` points to `https://github.com/meta-xucong/voice-director-cli` (an equivalent SSH URL is valid), and run the CLI commands from that clone's root. Use paths to your private work directory for inputs and outputs.
+    sample = payload.get("design_sample")
+    if sample is None:
+        return {"schema_version": 1, "status": "STYLE_SELECTED", "gate": "render_design_sample",
+                "selected_option_id": selected,
+                "instruction": "Render and show a short design sample using this direction; full-lesson rendering remains blocked until the user approves that sample."}
+    if not isinstance(sample, dict):
+        raise ValidationError("design_sample must be an object")
+    if sample.get("based_on_option_id") != selected:
+        raise ValidationError("design_sample.based_on_option_id must match selected_option_id")
+    sample_path, resolved_sample, sample_data = _verify_private_asset(base_dir, sample, "design_sample", "video_file")
+    if resolved_sample.suffix.lower() not in {".mp4", ".m4v", ".mov"} or len(sample_data) < 12 or sample_data[4:8] != b"ftyp":
+        raise ValidationError("design_sample.video_file must be an MP4-family video with a valid ftyp container signature")
+    decision = sample.get("decision_status", "pending")
+    if decision == "pending":
+        raise HumanReviewRequired({"schema_version": 1, "status": "AWAITING_HUMAN", "gate": "approve_design_sample",
+                                   "selected_option_id": selected, "design_sample": sample_path,
+                                   "sha256": sample["sha256"],
+                                   "question": "Is this short design sample approved for the full lesson render?",
+                                   "instruction": "Wait for explicit approval or revision notes; do not render the full lesson yet."})
+    if decision == "revision_requested":
+        _text(sample.get("feedback"), "design_sample.feedback")
+        raise HumanReviewRequired({"schema_version": 1, "status": "AWAITING_HUMAN", "gate": "revise_design_sample",
+                                   "selected_option_id": selected, "design_sample": sample_path,
+                                   "feedback": sample["feedback"],
+                                   "instruction": "Revise the short sample and request approval again before full-lesson rendering."})
+    if decision != "approved":
+        raise ValidationError("design_sample.decision_status must be pending, approved, or revision_requested")
+    return {"schema_version": 1, "status": "PASS", "gate": "full_lesson_render_allowed",
+            "selected_option_id": selected, "design_sample": sample_path, "sha256": sample["sha256"]}

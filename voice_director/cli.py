@@ -16,6 +16,7 @@ from .editorial_gate import release as release_editorial_bundle
 from .profiles import get_license_review, get_profile, list_profiles
 from .schema import load_inputs, read_json, read_script, sha256_bytes
 from .voice_screen import validate_voice_screen_map
+from .visual_gate import validate_visual_gate
 
 
 def _json_bytes(data):
@@ -201,6 +202,11 @@ def _command_voice_screen(args):
     return validate_voice_screen_map(payload), 0
 
 
+def _command_visual_gate(args):
+    payload, _ = read_json(args.manifest)
+    return validate_visual_gate(payload, Path(args.manifest).resolve().parent), 0
+
+
 def build_parser():
     parser = argparse.ArgumentParser(prog="voice-director", description="Validate, release reviewed narration, and compile offline voice-direction artifacts; never calls TTS providers.")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -243,6 +249,10 @@ def build_parser():
     voice_screen = subparsers.add_parser("validate-voice-screen", help="validate a private courseware voice/screen beat map")
     voice_screen.add_argument("--map", required=True, help="private voice-screen-map.json path")
     voice_screen.set_defaults(handler=_command_voice_screen)
+
+    visual_gate = subparsers.add_parser("visual-gate", help="require user selection of one of three visual directions and approval of its design sample")
+    visual_gate.add_argument("--manifest", required=True, help="private visual-gate.json path")
+    visual_gate.set_defaults(handler=_command_visual_gate)
 
     capabilities = subparsers.add_parser("capabilities", help="show frozen, declared backend capability profiles")
     capabilities.add_argument("--backend")

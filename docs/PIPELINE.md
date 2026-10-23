@@ -22,6 +22,20 @@ python -m voice_director validate-voice-screen --map ..\courseware-private\voice
 
 The validator checks the declared structure, summary-versus-syntax separation, source labels, long-hold reasons, and common credential patterns. It cannot verify semantic truth, rights, natural delivery, or final synchronization. If `uncertainty` is present, the command returns `AWAITING_HUMAN` and prints the question, evidence, impact, and recommendation. Show that exact packet in the conversation and wait for the user's explicit decision before approving the affected visual or narration. Then update the private map and validate again. Keep this material outside the public repository.
 
+## Mandatory visual direction and design-sample gate
+
+Before rendering a full lesson, prepare exactly three independent visual direction images for one representative passage. The options must differ in overall hierarchy, palette, and layout while keeping the same teaching content. Show the three actual images in the conversation and wait for the user to choose one. Do not render the design sample or full lesson while selection is pending.
+
+After selection, use that direction to render a short video sample (normally 20–60 seconds) containing representative UI and technical-display beats. Keep product screenshots genuine and source-labeled; preserve exact sanitized configuration on screen while keeping narration concise. Show the sample, then wait for explicit approval or revision notes. Render the full lesson only after the user approves that exact sample.
+
+Record the selection and design-sample review in a private `visual-gate.json`. Each of the three options records a unique `id`, `title`, relative `image_file`, and file `sha256`. After selection, set `selected_option_id`. A sample review records `video_file`, `sha256`, `based_on_option_id` (which must match the selection), and `decision_status` (`pending`, `approved`, or `revision_requested`); revision requests also record `feedback`. Asset paths must remain under the private run directory.
+
+```powershell
+python -m voice_director visual-gate --manifest ..\courseware-private\visual-gate.json
+```
+
+The offline validator verifies that there are exactly three option files, checks their hashes, validates the selected id, and checks the sample hash and review state. It returns `AWAITING_HUMAN` with the exact selection/review question while a decision is pending. With a selected style and no sample yet, it returns `STYLE_SELECTED` and permits only the short sample stage. It returns `PASS` only when the user-approved design sample hash is recorded. The command does not create or render images/video, assess design quality, or itself stop unrelated renderer commands; the courseware workflow must obey the gate before calling full rendering. Keep all manifests, image options, video samples, and feedback private.
+
 ## Responsibility map
 
 | Handoff | Existing component | Result |
