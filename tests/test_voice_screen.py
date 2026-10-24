@@ -70,8 +70,9 @@ def contrast_map():
         "trigger": "旁白明确比较 Codex 与 ChatGPT Work。", "takeaway": "Codex 聚焦项目工作；桌面 ChatGPT 对应网页版 Work。",
         "stage_beats": dict(zip(stages, [f"B{index:02d}" for index in range(1, 6)])),
         "participants": participants,
-        "motion": {"movement": "source_linked_zoom", "context_hold_seconds": 2,
-                   "reframe_seconds": 0.6, "context_blur_px": 8,
+        "motion": {"movement": "source_linked_zoom", "easing": "ease_in_out",
+                   "pixel_alignment": "integer_pixel_grid", "context_background": "blurred_source",
+                   "context_hold_seconds": 2.7, "reframe_seconds": 0.6, "context_blur_px": 8,
                    "detail_hold_seconds": 2.5, "synthesis_hold_seconds": 3},
     }]}
     return payload
@@ -121,7 +122,15 @@ class VoiceScreenContractTests(unittest.TestCase):
         self.assertEqual(report["status"], "PASS")
         self.assertEqual(report["visual_sequences"][0]["beat_ids"], ["B01", "B02", "B03", "B04", "B05"])
         self.assertEqual(report["visual_sequences"][0]["region_ids"], [["identity", "task"], ["identity", "work"]])
+        self.assertEqual(report["visual_sequences"][0]["pixel_alignment"], "integer_pixel_grid")
+        self.assertEqual(report["visual_sequences"][0]["context_background"], "blurred_source")
         self.assertEqual(report["visual_sequences"][0]["context_blur_px"], 8)
+
+    def test_contrast_reveal_requires_a_readable_full_context_hold(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["motion"]["context_hold_seconds"] = 2.49
+        with self.assertRaisesRegex(ValidationError, "context_hold_seconds"):
+            validate_voice_screen_map(payload)
 
     def test_contrast_reveal_rejects_reordered_beats(self):
         payload = contrast_map()
@@ -190,6 +199,38 @@ class VoiceScreenContractTests(unittest.TestCase):
                 payload = contrast_map()
                 payload["visual_sequences"][0]["motion"]["context_blur_px"] = invalid
                 with self.assertRaisesRegex(ValidationError, "context_blur_px"):
+                    validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_requires_explicit_background_treatment_and_blur(self):
+        payload = contrast_map()
+        del payload["visual_sequences"][0]["motion"]["context_blur_px"]
+        with self.assertRaisesRegex(ValidationError, "context_blur_px"):
+            validate_voice_screen_map(payload)
+        payload = contrast_map()
+        payload["visual_sequences"][0]["motion"].update({"context_background": "blurred_source", "context_blur_px": 0})
+        with self.assertRaisesRegex(ValidationError, "must be > 0"):
+            validate_voice_screen_map(payload)
+        payload = contrast_map()
+        payload["visual_sequences"][0]["motion"].update({"context_background": "removed_or_replaced", "context_blur_px": 8})
+        with self.assertRaisesRegex(ValidationError, "must be 0"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_requires_smooth_pixel_aligned_motion(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["motion"]["easing"] = "linear"
+        with self.assertRaisesRegex(ValidationError, "motion.easing"):
+            validate_voice_screen_map(payload)
+        payload = contrast_map()
+        payload["visual_sequences"][0]["motion"]["pixel_alignment"] = "subpixel"
+        with self.assertRaisesRegex(ValidationError, "integer_pixel_grid"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_rejects_fractional_crop_geometry(self):
+        for field in ("x", "y", "width", "height", "display_width", "display_height"):
+            with self.subTest(field=field):
+                payload = contrast_map()
+                payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"][field] += 0.5
+                with self.assertRaisesRegex(ValidationError, "integer pixel"):
                     validate_voice_screen_map(payload)
 
     def test_contrast_reveal_pending_uncertainty_surfaces_in_human_packet(self):
