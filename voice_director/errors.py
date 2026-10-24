@@ -8,3 +8,11 @@ class ValidationError(VoiceDirectorError):
 
 class OutputExistsError(VoiceDirectorError):
     pass
+
+
+class HumanReviewRequired(VoiceDirectorError):
+    """The bundle contains uncertainties that need an explicit user decision."""
+
+    def __init__(self, report):
+        super().__init__(report.get("status", "human review required"))
+        self.report = report

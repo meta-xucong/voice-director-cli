@@ -12,7 +12,7 @@ This repository can be installed by asking Codex to read this file and follow it
 4. Installs the four related Skills under `%CODEX_HOME%\skills` or `%USERPROFILE%\.codex\skills`, preserving their sibling folders and references.
 5. Runs the offline test suite and CLI smoke checks.
 
-No pip packages, speech models, TTS provider accounts, or API keys are required. The setup does not call a TTS service or upload course material. If Python is absent, the script attempts a user-scope install of `Python.Python.3.12` with WinGet and accepts the package/source agreements so the setup can proceed unattended. Microsoft documents the WinGet install options in its [install command reference](https://learn.microsoft.com/en-us/windows/package-manager/winget/install). If WinGet is missing or installation fails, the script stops and explains the manual step.
+No pip packages, speech models, TTS provider accounts, or API keys are required. The setup does not call a TTS service or upload course material. The optional courseware video quality gate requires FFmpeg's `ffprobe` and `ffmpeg` (available on `PATH` or passed with `--ffprobe` and `--ffmpeg`); the installer does not install them. If Python is absent, the script attempts a user-scope install of `Python.Python.3.12` with WinGet and accepts the package/source agreements so the setup can proceed unattended. Microsoft documents the WinGet install options in its [install command reference](https://learn.microsoft.com/en-us/windows/package-manager/winget/install). If WinGet is missing or installation fails, the script stops and explains the manual step.
 
 ## Codex procedure
 
