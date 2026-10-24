@@ -146,6 +146,7 @@ def validate_visual_sequences(payload):
             raise ValidationError(f"{prefix}.motion.movement must be one of {sorted(_MOVEMENTS)}")
         context_hold = _number(motion.get("context_hold_seconds"), f"{prefix}.motion.context_hold_seconds", minimum=1.2, maximum=4.5)
         reframe = _number(motion.get("reframe_seconds"), f"{prefix}.motion.reframe_seconds", minimum=0.25, maximum=0.9)
+        context_blur = _number(motion.get("context_blur_px", 0), f"{prefix}.motion.context_blur_px", minimum=0, maximum=16)
         if "region_stagger_seconds" in motion:
             _number(motion["region_stagger_seconds"], f"{prefix}.motion.region_stagger_seconds", minimum=0, maximum=0.8)
         detail_hold = _number(motion.get("detail_hold_seconds"), f"{prefix}.motion.detail_hold_seconds", minimum=1.5, maximum=8)
@@ -171,5 +172,6 @@ def validate_visual_sequences(payload):
                         "participant_labels": [participant["label"] for participant in participants],
                         "region_ids": [[region["id"] for region in participant["source_pixel_regions"]]
                                        for participant in participants],
+                        "context_blur_px": context_blur,
                         "uncertainty": uncertainty})
     return reports

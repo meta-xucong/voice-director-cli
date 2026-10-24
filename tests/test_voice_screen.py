@@ -71,7 +71,8 @@ def contrast_map():
         "stage_beats": dict(zip(stages, [f"B{index:02d}" for index in range(1, 6)])),
         "participants": participants,
         "motion": {"movement": "source_linked_zoom", "context_hold_seconds": 2,
-                   "reframe_seconds": 0.6, "detail_hold_seconds": 2.5, "synthesis_hold_seconds": 3},
+                   "reframe_seconds": 0.6, "context_blur_px": 8,
+                   "detail_hold_seconds": 2.5, "synthesis_hold_seconds": 3},
     }]}
     return payload
 
@@ -120,6 +121,7 @@ class VoiceScreenContractTests(unittest.TestCase):
         self.assertEqual(report["status"], "PASS")
         self.assertEqual(report["visual_sequences"][0]["beat_ids"], ["B01", "B02", "B03", "B04", "B05"])
         self.assertEqual(report["visual_sequences"][0]["region_ids"], [["identity", "task"], ["identity", "work"]])
+        self.assertEqual(report["visual_sequences"][0]["context_blur_px"], 8)
 
     def test_contrast_reveal_rejects_reordered_beats(self):
         payload = contrast_map()
@@ -181,6 +183,14 @@ class VoiceScreenContractTests(unittest.TestCase):
             "recommendation": "Recommendation.", "decision_status": []}
         with self.assertRaisesRegex(ValidationError, "decision_status must be a non-empty string"):
             validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_context_blur_is_bounded(self):
+        for invalid in (-0.1, 16.1):
+            with self.subTest(invalid=invalid):
+                payload = contrast_map()
+                payload["visual_sequences"][0]["motion"]["context_blur_px"] = invalid
+                with self.assertRaisesRegex(ValidationError, "context_blur_px"):
+                    validate_voice_screen_map(payload)
 
     def test_contrast_reveal_pending_uncertainty_surfaces_in_human_packet(self):
         payload = contrast_map()
