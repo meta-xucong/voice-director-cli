@@ -72,8 +72,8 @@ def contrast_map():
         "participants": participants,
         "motion": {"movement": "source_linked_zoom", "easing": "ease_in_out",
                    "pixel_alignment": "integer_pixel_grid", "context_background": "blurred_source",
-                   "context_hold_seconds": 2.7, "reframe_seconds": 0.6, "context_blur_px": 8,
-                   "detail_hold_seconds": 2.5, "synthesis_hold_seconds": 3},
+                   "context_hold_seconds": 2.7, "reframe_seconds": 1, "context_blur_px": 8,
+                   "detail_hold_seconds": 4, "synthesis_hold_seconds": 3},
     }]}
     return payload
 
@@ -130,6 +130,20 @@ class VoiceScreenContractTests(unittest.TestCase):
         payload = contrast_map()
         payload["visual_sequences"][0]["motion"]["context_hold_seconds"] = 2.49
         with self.assertRaisesRegex(ValidationError, "context_hold_seconds"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_enforces_approved_crop_travel_window(self):
+        for invalid in (0.79, 1.21):
+            with self.subTest(invalid=invalid):
+                payload = contrast_map()
+                payload["visual_sequences"][0]["motion"]["reframe_seconds"] = invalid
+                with self.assertRaisesRegex(ValidationError, "reframe_seconds"):
+                    validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_requires_four_seconds_of_clear_detail(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["motion"]["detail_hold_seconds"] = 3.99
+        with self.assertRaisesRegex(ValidationError, "detail_hold_seconds"):
             validate_voice_screen_map(payload)
 
     def test_contrast_reveal_rejects_reordered_beats(self):

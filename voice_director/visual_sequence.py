@@ -163,7 +163,7 @@ def validate_visual_sequences(payload):
         if context_background not in _CONTEXT_BACKGROUNDS:
             raise ValidationError(f"{prefix}.motion.context_background must be one of {sorted(_CONTEXT_BACKGROUNDS)}")
         context_hold = _number(motion.get("context_hold_seconds"), f"{prefix}.motion.context_hold_seconds", minimum=2.5, maximum=4.5)
-        reframe = _number(motion.get("reframe_seconds"), f"{prefix}.motion.reframe_seconds", minimum=0.25, maximum=0.9)
+        reframe = _number(motion.get("reframe_seconds"), f"{prefix}.motion.reframe_seconds", minimum=0.8, maximum=1.2)
         context_blur = _number(motion.get("context_blur_px"), f"{prefix}.motion.context_blur_px", minimum=0, maximum=16)
         if context_background == "blurred_source" and context_blur == 0:
             raise ValidationError(f"{prefix}.motion.context_blur_px must be > 0 when context_background is blurred_source")
@@ -171,7 +171,7 @@ def validate_visual_sequences(payload):
             raise ValidationError(f"{prefix}.motion.context_blur_px must be 0 when context_background is removed_or_replaced")
         if "region_stagger_seconds" in motion:
             _number(motion["region_stagger_seconds"], f"{prefix}.motion.region_stagger_seconds", minimum=0, maximum=0.8)
-        detail_hold = _number(motion.get("detail_hold_seconds"), f"{prefix}.motion.detail_hold_seconds", minimum=1.5, maximum=8)
+        detail_hold = _number(motion.get("detail_hold_seconds"), f"{prefix}.motion.detail_hold_seconds", minimum=4, maximum=8)
         synthesis_hold = _number(motion.get("synthesis_hold_seconds"), f"{prefix}.motion.synthesis_hold_seconds", minimum=2, maximum=8)
         for stage in ("context_a", "context_b"):
             if context_hold + reframe > by_id[stage_beats[stage]][1]["duration_seconds"]:

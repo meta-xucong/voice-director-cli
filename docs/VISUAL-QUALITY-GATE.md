@@ -20,7 +20,7 @@
 
 **D/I/A:** D1 (resolved numeric quality thresholds); I2 (cross-stage manifests, hash bindings, and failure/human-review paths); A1 (render-release gate, privacy and integrity). **Writer:** main session only. **Audit:** separate read-only reviewer; requested model route provenance is currently `ROUTE_UNVERIFIED` unless runtime metadata establishes otherwise.
 
-**Allowed files:** `docs/VISUAL-QUALITY-GATE.md`, `docs/VISUAL-ASSET-REVIEW.md`, `docs/PIPELINE.md`, `README.md`, `skills/courseware-pipeline/SKILL.md`, `voice_director/cli.py`, `voice_director/visual_gate.py`, new `voice_director/visual_quality.py`, and related/new tests. No renderer internals or user media.
+**Allowed files:** `docs/VISUAL-QUALITY-GATE.md`, `docs/EDITING-RHYTHM.md`, `docs/VISUAL-ASSET-REVIEW.md`, `docs/PIPELINE.md`, `README.md`, `skills/courseware-pipeline/SKILL.md`, `voice_director/cli.py`, `voice_director/visual_gate.py`, new `voice_director/visual_quality.py`, and related/new tests. No renderer internals or user media.
 
 **Acceptance evidence:** frozen manifest contracts; negative tests for stale hashes, invalid probe metadata, low-resolution and upscaled screenshots, crooked/misaligned annotations, missing frame evidence, jitter, quality failures, and missing human approvals; full offline suite; whitespace check; independent audit result with route provenance caveat; fast-forward push to the authorized GitHub branch.
 
@@ -54,6 +54,8 @@ For a multi-image comparison, use the [contrast-reveal sequence contract](CONTRA
 The harness records pass/fail evidence per beat for consistency with the chosen design, visual hierarchy, spacing/alignment, typography, color consistency, clean edges/anti-aliasing, screenshot readability, crop safety, factual/UI authenticity, motion stability, and pacing. At 1080p, default minimum text sizes are title 48 px, body 32 px, captions 36 px and essential screenshot/code details 24 px. Scale them with output height. Every technical-display beat must report its measured technical text size. Numeric size does not replace inspection at normal playback size. A failed item, unreadable essential text, clipping, shimmer, jitter, misplaced annotation, or unmotivated motion blocks the quality gate and requires corrected evidence.
 
 Use purposeful transitions and local focus effects. Prefer 3–10 second teaching beats; document any hold over 12 seconds. Default transition duration is 0.25–0.60 seconds; record reasons for exceptions. Keep screenshot/text layers stable during reading holds; never use continuous subpixel drift. The motion review checks the rendered video, not only the storyboard declaration.
+
+Apply the whole-course timing rules in [EDITING-RHYTHM.md](EDITING-RHYTHM.md): clear full-screenshot context for at least 2.5 seconds, source selection for at least 0.8 seconds, crop travel over roughly 0.8–1.2 seconds, settled crop and key cue visibility for at least 4 seconds, and transitions aligned to continuous narration. Measure only clear time after motion settles. A readable visual must not create inserted silence or an empty wait.
 
 ## Deterministic boundary
 

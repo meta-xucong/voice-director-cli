@@ -1,3 +1,4 @@
+Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 # Integrated workflow: source video to rendered lesson
 
 The integrated workflow routes among existing tools: source video to clean narration and visual assets, TTS choice and audition, full audio generation, then captions/timing and HyperFrames rendering.
@@ -23,6 +24,8 @@ python -m voice_director validate-voice-screen --map ..\courseware-private\voice
 When a teaching passage compares interfaces, workflows, alternatives, or before/after states, the harness should judge whether a source-to-detail reveal will make the evidence easier to understand. For a useful contrast, declare the five-stage `contrast_reveal` in [`CONTRAST-REVEAL.md`](CONTRAST-REVEAL.md): whole-screen context, source-linked detail, second context, matching detail, then a balanced synthesis with a concrete takeaway. Keep genuine source pixels tied to every crop and show enough screen context for orientation. The map validator checks ordered stages, authentic asset references, crop bounds, no-upscale geometry, and motion timing. It does not decide semantic relevance or aesthetic quality; show any unresolved source or legibility question in the conversation and await the user's decision.
 
 The validator checks the declared structure, summary-versus-syntax separation, source labels, long-hold reasons, and common credential patterns. It cannot verify semantic truth, rights, natural delivery, or final synchronization. If `uncertainty` is present, the command returns `AWAITING_HUMAN` and prints the question, evidence, impact, and recommendation. Show that exact packet in the conversation and wait for the user's explicit decision before approving the affected visual or narration. Then update the private map and validate again. Keep this material outside the public repository.
+
+Use the shared [lesson editing rhythm contract](EDITING-RHYTHM.md) for cue visibility, screenshot context, crop travel and reading holds, voice continuity, and full-lesson pacing. Comparison scenes also follow the more specific [contrast-reveal sequence contract](CONTRAST-REVEAL.md).
 
 ## Internet asset search and harness suitability review
 
@@ -124,3 +127,4 @@ See [README.md](../README.md) for director map fields, backend capability semant
 ## Security and reuse boundary
 
 Do not place source-course material, private transcripts, media, narration, TTS audio, credentials, or unrelated personal artifacts in the repository. The chosen TTS tool may send narration to its provider under that tool's existing data-use behavior. The skill folders are not auto-registered by a clone: install `courseware-pipeline`, `source-to-script`, and `humanized-source-rewrite` together, preserving sibling paths and references. This repository has no license file; public visibility alone does not grant reuse rights.
+
