@@ -3,6 +3,7 @@
 import re
 
 from .errors import HumanReviewRequired, ValidationError
+from .visual_sequence import validate_visual_sequences
 
 
 _VOICE_MODES = {"summary", "verbatim", "silent"}
@@ -132,8 +133,14 @@ def validate_voice_screen_map(payload):
         report_beats.append({"id": beat_id, "duration_seconds": duration, "voice_mode": mode,
                              "technical_display": technical, "focus": beat["focus"], "assets": asset_report})
 
+    sequences = validate_visual_sequences(payload)
+    for sequence in sequences:
+        uncertainty = sequence.get("uncertainty")
+        if uncertainty and uncertainty.get("decision_status", "pending") == "pending":
+            pending.append({"sequence_id": sequence["id"], **uncertainty})
     report = {"schema_version": 1, "status": "AWAITING_HUMAN" if pending else "PASS",
               "beat_count": len(beats), "beats": report_beats, "pending_uncertainties": pending,
+              "visual_sequences": sequences,
               "scope_note": "Structural contract only; it does not verify semantic accuracy, voice naturalness, rights, or final audio/video sync."}
     if pending:
         raise HumanReviewRequired(report)

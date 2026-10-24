@@ -33,6 +33,49 @@ def beat(**overrides):
     return result
 
 
+def contrast_map():
+    stages = ["context_a", "detail_a", "context_b", "detail_b", "synthesis"]
+    def region(region_id, purpose, x, y, width, height, display_width, display_height):
+        return {"id": region_id, "purpose": purpose, "crop": {
+            "coordinate_space": "source_pixels", "x": x, "y": y, "width": width, "height": height,
+            "source_width": 1920, "source_height": 1140,
+            "display_width": display_width, "display_height": display_height}}
+    participants = [
+        {"id": "codex", "label": "Codex", "asset_source": "user Codex capture", "authentic": True,
+         "focus": "Codex project selector", "source_pixel_regions": [
+             region("identity", "Product identity", 64, 48, 260, 150, 250, 144),
+             region("task", "Code task context", 390, 70, 900, 140, 880, 137)]},
+        {"id": "work", "label": "ChatGPT Work", "asset_source": "user Work capture", "authentic": True,
+         "focus": "ChatGPT selector and Work composer", "source_pixel_regions": [
+             region("identity", "Product identity", 64, 48, 260, 150, 250, 144),
+             region("work", "ChatGPT Work composer", 490, 990, 900, 140, 880, 137)]},
+    ]
+    beats = []
+    for index, stage in enumerate(stages, 1):
+        participant_id = "codex" if stage.endswith("_a") else "work" if stage.endswith("_b") else None
+        assets = []
+        if stage != "synthesis":
+            participant = participants[0 if participant_id == "codex" else 1]
+            assets = [{"kind": "real_ui", "source": participant["asset_source"], "authentic": True}]
+        else:
+            assets = [{"kind": "real_ui", "source": participant["asset_source"], "authentic": True}
+                      for participant in participants]
+        beats.append(beat(id=f"B{index:02d}", duration_seconds=4, technical_display=False,
+                          required_screen_terms=[], screen_only_terms=[], assets=assets,
+                          visual_sequence={"id": "chatgpt-codex", "stage": stage,
+                                           **({"participant_id": "a" if participant_id == "codex" else "b"}
+                                              if participant_id else {})}))
+    payload = {"schema_version": 1, "beats": beats, "visual_sequences": [{
+        "id": "chatgpt-codex", "pattern": "contrast_reveal",
+        "trigger": "旁白明确比较 Codex 与 ChatGPT Work。", "takeaway": "Codex 聚焦项目工作；桌面 ChatGPT 对应网页版 Work。",
+        "stage_beats": dict(zip(stages, [f"B{index:02d}" for index in range(1, 6)])),
+        "participants": participants,
+        "motion": {"movement": "source_linked_zoom", "context_hold_seconds": 2,
+                   "reframe_seconds": 0.6, "detail_hold_seconds": 2.5, "synthesis_hold_seconds": 3},
+    }]}
+    return payload
+
+
 class VoiceScreenContractTests(unittest.TestCase):
     def test_summary_keeps_exact_config_on_screen_and_passes(self):
         report = validate_voice_screen_map({"schema_version": 1, "beats": [beat()]})
@@ -71,6 +114,86 @@ class VoiceScreenContractTests(unittest.TestCase):
     def test_long_hold_requires_reason(self):
         with self.assertRaisesRegex(ValidationError, "duration_reason"):
             validate_voice_screen_map({"schema_version": 1, "beats": [beat(duration_seconds=13)]})
+
+    def test_contrast_reveal_checks_stages_sources_and_reports_sequence(self):
+        report = validate_voice_screen_map(contrast_map())
+        self.assertEqual(report["status"], "PASS")
+        self.assertEqual(report["visual_sequences"][0]["beat_ids"], ["B01", "B02", "B03", "B04", "B05"])
+        self.assertEqual(report["visual_sequences"][0]["region_ids"], [["identity", "task"], ["identity", "work"]])
+
+    def test_contrast_reveal_rejects_reordered_beats(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["stage_beats"]["detail_a"] = "B04"
+        with self.assertRaisesRegex(ValidationError, "teaching order"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_requires_authentic_source_in_context_and_detail(self):
+        payload = contrast_map()
+        payload["beats"][1]["assets"][0]["authentic"] = False
+        with self.assertRaisesRegex(ValidationError, "real_ui assets must be explicitly marked authentic"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_rejects_out_of_bounds_and_upscaled_crops(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]["x"] = 1700
+        with self.assertRaisesRegex(ValidationError, "extends beyond"):
+            validate_voice_screen_map(payload)
+        payload = contrast_map()
+        payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]["display_width"] = 300
+        with self.assertRaisesRegex(ValidationError, "would be upscaled"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_rejects_non_finite_geometry(self):
+        for invalid in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(invalid=invalid):
+                payload = contrast_map()
+                payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]["x"] = invalid
+                with self.assertRaisesRegex(ValidationError, "finite number"):
+                    validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_rejects_extremely_large_integer_coordinates_cleanly(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]["x"] = 10 ** 10000
+        with self.assertRaisesRegex(ValidationError, "<= 1000000"):
+            validate_voice_screen_map(payload)
+        payload = contrast_map()
+        crop = payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]
+        crop.update({"width": 10 ** 1000, "height": 1, "source_width": 2 * 10 ** 1000,
+                     "source_height": 2, "display_width": 1, "display_height": 1})
+        with self.assertRaisesRegex(ValidationError, "<= 1000000"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_holds_fit_inside_their_beats(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["motion"]["synthesis_hold_seconds"] = 4
+        payload["beats"][4]["duration_seconds"] = 3.5
+        with self.assertRaisesRegex(ValidationError, "exceeds the synthesis beat duration"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_rejects_unhashable_enum_values_cleanly(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["motion"]["movement"] = []
+        with self.assertRaisesRegex(ValidationError, "motion.movement must be a non-empty string"):
+            validate_voice_screen_map(payload)
+        payload = contrast_map()
+        payload["visual_sequences"][0]["uncertainty"] = {
+            "question": "Question?", "evidence": "Evidence.", "impact": "Impact.",
+            "recommendation": "Recommendation.", "decision_status": []}
+        with self.assertRaisesRegex(ValidationError, "decision_status must be a non-empty string"):
+            validate_voice_screen_map(payload)
+
+    def test_contrast_reveal_pending_uncertainty_surfaces_in_human_packet(self):
+        payload = contrast_map()
+        payload["visual_sequences"][0]["uncertainty"] = {
+            "question": "Does the crop show the same ChatGPT Work surface?",
+            "evidence": "The selector is visible but the web mapping is not shown in this image.",
+            "impact": "Learners could confuse brand identity with interface type.",
+            "recommendation": "Add the Work composer label or ask the user for a clearer capture.",
+            "decision_status": "pending"}
+        with self.assertRaises(HumanReviewRequired) as raised:
+            validate_voice_screen_map(payload)
+        self.assertEqual(raised.exception.report["status"], "AWAITING_HUMAN")
+        self.assertEqual(raised.exception.report["pending_uncertainties"][0]["sequence_id"], "chatgpt-codex")
 
     def test_cli_exposes_uncertainty_packet_with_awaiting_exit_code(self):
         payload = {"schema_version": 1, "beats": [beat(uncertainty={
