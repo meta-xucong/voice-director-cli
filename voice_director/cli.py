@@ -1,322 +1,130 @@
-"""Command-line entry point for offline voice-director artifacts."""
+Û^š›bh¥êß¢¹­…â'ŠØš–,ŞçÚº[C®+Ş²Š^­«b¢z'¶…ŠW’ÊË^ššè¾'^­ö¢•çHˆˆÛÛ[X[™[[™H[HÚ[›ÜˆÙ™›[™H›ÚXÙKY\™XİÜˆ\Y˜XİËˆˆˆƒBƒBš[\Ü\™Ü\œÙCBš[\Ü\ÚXƒBš[\ÜœÛÛƒBš[\ÜÜÃBš[\ÜŞ\ÃBš[\Ü[\š[CB™œ›ÛH]Xˆ[\Ü]BƒB™œ›ÛH˜Y\\œÈ[\ÜØÛÛ›ÛÜ™\ÜÛÛ\[WØ˜XÚÙ[™B™œ›ÛH˜[YÛ›Y[[\Ü]Y]Ø[YÛ›Y[B™œ›ÛH˜Ú[šÚ[™È[\ÜZ[ØÚ[šÜÃB™œ›ÛH™\œ›ÜœÈ[\Ü[X[”™]šY]Ô™\]Z\™Yİ]]^\İÑ\œ›Ü‹˜[Y][Û‘\œ›Ü‹›ÚXÙQ\™XİÜ‘\œ›ÜƒB™œ›ÛH™Y]ÜšX[ÙØ]H[\Ü™[X\ÙH\È™[X\ÙWÙY]ÜšX[Ø[™CB™œ›ÛHœ›Ùš[\È[\ÜÙ]ÛXÙ[œÙWÜ™]šY]ËÙ]Ü›Ùš[K\İÜ›Ùš[\ÃB™œ›ÛHœØÚ[XH[\ÜØYÚ[œ]Ë™XYÚœÛÛ‹™XYÜØÜš\ÚLM—Ø]\ÃB™œ›ÛH›ÚXÙWÜØÜ™Y[ˆ[\Ü˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\B™œ›ÛHš\İX[Ø\ÜÙ]Ü™]šY]È[\ÜØYØ[™İ˜[Y]Wİš\İX[Ø\ÜÙ]Ü™]šY]ÃB™œ›ÛHš\İX[ÙØ]H[\Ü˜[Y]Wİš\İX[ÙØ]CB™œ›ÛHš\İX[Ü]X[]H[\ÜØYØ[™İ˜[Y]Wİš\İX[Ü]X[]WÜ™]šY]ÃB™œ›ÛHš\İX[ØÛİ\œÙH[\Ü˜[Y]WØÛİ\œÙWİš\İX[ÛX[šY™\İBƒBƒB™YˆÚœÛÛ—Ø]\Ê]JNƒBˆ™]\›ˆ
+œÛÛ‹™[\Ê]K[œİ\™WØ\ØÚZOQ˜[ÙK[™[L‹[İ×Û˜[Q˜[ÙJH
+È—ˆŠK™[˜ÛÙJ]‹NŠCBƒBƒB™YˆİÜš]WØ\Y˜XİÊİ]Ù\‹š[\Ë[œ]Ú\Ú\Ëİ™\Üš]K[œ]Ü]ÊNƒBˆİ]]Ù\ˆH]
+İ]Ù\ŠCBˆÈ™Y›YÚHÚÛH˜]Ú™Y›Ü™HÜ™X][™ÈÜˆ™\XÚ[™È[H\Y˜XİËƒBˆ›Üˆ˜[YH[ˆ
 
-import argparse
-import hashlib
-import json
-import os
-import sys
-import tempfile
-from pathlib import Path
+™š[\Ë›X[šY™\İšœÛÛˆŠNƒBˆ\™Ù]Hİ]]Ù\ˆÈ˜[YCBˆ›Üˆ[œ]Ü][ˆX\
+][œ]Ü]ÊNƒBˆYˆ
+\™Ù]œ™\ÛÛ™J
+HOH[œ]Ü]œ™\ÛÛ™J
+CBˆÜˆ
+\™Ù]™^\İÊ
+H[™[œ]Ü]™^\İÊ
+CBˆ[™\™Ù]œØ[YYš[J[œ]Ü]
+JJNƒBˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠBˆˆ›İ]][X\Ù\È[œ]ˆİ\™Ù]H[X\Ù\ÈÚ[œ]Ü]NÈƒBˆ˜ÚÛÜÙHHÙ\\˜]Hİ]]\™XİÜHŠCBˆNƒBˆİ]]Ù\‹›ZÙ\Š\™[ÏUYK^\İÛÚÏUYJCBˆ^Ù\ÔÑ\œ›Üˆ\È^ÎƒBˆ˜Z\ÙH›ÚXÙQ\™XİÜ‘\œ›ÜŠˆ˜Ø[››İÜ™X]Hİ]]\™XİÜHÛİ]]Ù\ŸNˆÙ^ßHŠHœ›ÛH^ÃBˆ\™Ù]ÈHÛ˜[YNˆİ]]Ù\ˆÈ˜[YH›Üˆ˜[YH[ˆš[\ßCBˆ^\İ[™ÈHÜİŠ]
+H›Üˆ][ˆ\™Ù]Ë˜[Y\Ê
+HYˆ]™^\İÊ
+WCBˆYˆ^\İ[™È[™›İİ™\Üš]NƒBˆ˜Z\ÙHİ]]^\İÑ\œ›ÜŠœ™Y\Ú[™ÈÈİ™\Üš]H^\İ[™Èİ]]
+ÊNˆˆ
+È‹‹š›Ú[Š^\İ[™ÊH
+ÈÈ\ÜÈK[İ™\Üš]H^XÚ]HŠCBƒBˆ^[ØYÈHÛ˜[YNˆÚœÛÛ—Ø]\Ê]JH›Üˆ˜[YK]H[ˆš[\Ëš][\Ê
+_CBˆİ]]Ú\Ú\ÈHÛ˜[YNˆ\ÚX‹œÚLMŠ^[ØY
+Kš^YÙ\İ
 
-from .adapters import _control_report, compile_backend
-from .alignment import audit_alignment
-from .chunking import build_chunks
-from .errors import HumanReviewRequired, OutputExistsError, ValidationError, VoiceDirectorError
-from .editorial_gate import release as release_editorial_bundle
-from .profiles import get_license_review, get_profile, list_profiles
-from .schema import load_inputs, read_json, read_script, sha256_bytes
-from .voice_screen import validate_voice_screen_map
-from .visual_asset_review import load_and_validate_visual_asset_review
-from .visual_gate import validate_visual_gate
-from .visual_quality import load_and_validate_visual_quality_review
+H›Üˆ˜[YK^[ØY[ˆ^[ØYËš][\Ê
+_CBˆX[šY™\İHÃBˆœØÚ[XWİ™\œÚ[ÛˆˆKBˆÛÛˆ›ÚXÙKY\™XİÜˆ‹BˆÛÛİ™\œÚ[ÛˆˆŒKŒŒ‹Bˆš[œ]ÜÚLMˆˆ[œ]Ú\Ú\ËBˆ˜\Y˜Xİ×ÜÚLMˆˆİ]]Ú\Ú\ËBˆœ›İšY\—ØØ[ÈˆBˆ›™]ÛÜš×ØXØÙ\ÜÈˆ˜[ÙKBˆCBˆ^[ØYÖÈ›X[šY™\İšœÛÛˆ—HHÚœÛÛ—Ø]\ÊX[šY™\İ
+CBˆX[šY™\İÜ]H\™Ù]Ë™Ù]
+›X[šY™\İšœÛÛˆ‹İ]]Ù\ˆÈ›X[šY™\İšœÛÛˆŠCBˆYˆX[šY™\İÜ]™^\İÊ
+H[™›X[šY™\İšœÛÛˆˆ›İ[ˆ\™Ù]È[™›İİ™\Üš]NƒBˆ˜Z\ÙHİ]]^\İÑ\œ›ÜŠˆœ™Y\Ú[™ÈÈİ™\Üš]H^\İ[™Èİ]]ˆÛX[šY™\İÜ]NÈ\ÜÈK[İ™\Üš]H^XÚ]HŠCBƒBˆ[\Ü]ÈH×CBˆNƒBˆ›Üˆ˜[YK^[ØY[ˆ^[ØYËš][\Ê
+NƒBˆ\™Ù]Hİ]]Ù\ˆÈ˜[YCBˆÚ][\š[K“˜[YY[\Ü˜\Qš[J[ÙOHØˆ‹\[İ]]Ù\‹™Yš^H‹›ÚXÙKY\™XİÜ‹H‹İY™š^H‹\‹[]OQ˜[ÙJH\Èİ™X[NƒBˆ[\Ü]H]
+İ™X[K›˜[YJCBˆ[\Ü]Ë˜\[™
+[\Ü]
+CBˆİ™X[KÜš]J^[ØY
+CBˆİ™X[K™›\Ú
 
+CBˆÜË™œŞ[˜Êİ™X[K™š[[›Ê
+JCBˆ›Üˆ[\Ü]˜[YH[ˆš\
+[\Ü]Ë^[ØYÊNƒBˆÜËœ™\XÙJ[\Ü]İ]]Ù\ˆÈ˜[YJCBˆ™]\›ˆX[šY™\İBˆ^Ù\ÔÑ\œ›Üˆ\È^ÎƒBˆ˜Z\ÙH›ÚXÙQ\™XİÜ‘\œ›ÜŠˆ™˜Z[YÈÜš]Hİ]]\Y˜XİÈ[™\ˆÛİ]]Ù\ŸNˆÙ^ßHŠHœ›ÛH^ÃBˆš[˜[NƒBˆ›Üˆ[\Ü][ˆ[\Ü]ÎƒBˆNƒBˆ[\Ü][›[šÊZ\ÜÚ[™×ÛÚÏUYJCBˆ^Ù\ÔÑ\œ›ÜƒBˆ\ÜÃBƒBƒB™YˆÜš[ÚœÛÛŠ]Kİ™X[OS›Û™JNƒBˆYˆİ™X[H\È›Û™NƒBˆİ™X[HHŞ\Ëœİİ]Bˆİ™X[KÜš]JœÛÛ‹™[\Ê]K[œİ\™WØ\ØÚZOQ˜[ÙK[™[L‹[İ×Û˜[Q˜[ÙJH
+È—ˆŠCBƒBƒB™YˆÚ[œ]Ú\Ú\Ê[œ]ÊNƒBˆ™]\›ˆÃBˆœØÜš\ÜÚLMˆˆ[œ]ÖÈœÛİ\˜ÙWÜÚLMˆ—KBˆ™\™XİÜ—ÜÚLMˆˆ[œ]ÖÈ™\™XİÜ—ÜÚLMˆ—KBˆCBƒBƒB™YˆØ›ØÚÙYØÛÛ\[WÜ™\Ü
+˜XÚÙ[™\™XİÜ‹Y\ÜØYÙJNƒBˆ™\ÜHØÛÛ›ÛÜ™\Ü
+˜XÚÙ[™\™XİÜŠCBˆ™\ÜÈ˜ÛÛ\[WÜİ]\È—HH˜›ØÚÙYƒBˆ™\ÜÈ˜ÛÛ\[WÙ\œ›Üˆ—HHY\ÜØYÙCBˆ›Üˆ˜[YK]Z[[ˆ™\ÜÈ˜ÛÛ›ÛÈ—Kš][\Ê
+NƒBˆYˆ]Z[™Ù]
+œ™\]Y\İYŠNƒBˆ]Z[Èœİ]\È—HH[œİ\ÜYƒBˆ]Z[È˜\YY—HH˜[ÙCBˆ]Z[Èœ™X\ÛÛˆ—HH˜ÛÛ\[\ˆ›ÙXÙY›È˜XÚÙ[™˜Yˆˆ
+ÈY\ÜØYÙCBˆ™]\›ˆ™\ÜBƒBƒB™YˆØÛÛ[X[™İ˜[Y]J\™ÜÊNƒBˆ[œ]ÈHØYÚ[œ]Ê\™ÜËœØÜš\\™ÜË™\™XİÜŠCBˆ™]\›ˆÃBˆ˜[YˆYKBˆœØÚ[XWİ™\œÚ[ÛˆˆKBˆœÛİ\˜ÙWÜÚLMˆˆ[œ]ÖÈœÛİ\˜ÙWÜÚLMˆ—KBˆœÛİ\˜ÙWØÚ\˜Xİ\œÈˆ[Š[œ]ÖÈœÛİ\˜ÙH—JKBˆœÛİ\˜ÙWİ]Ø]\Èˆ[Š[œ]ÖÈœÛİ\˜ÙWØ]\È—JKBˆ™\™XİÜ—ÜÚLMˆˆ[œ]ÖÈ™\™XİÜ—ÜÚLMˆ—KBˆœÙYÛY[ØÛİ[ˆ[Š[œ]ÖÈ™\™XİÜˆ—VÈœÙYÛY[È—JKBˆœ›İšY\œ×ØØ[YˆBˆKBƒBƒB™YˆØÛÛ[X[™ØÛÛ\[J\™ÜÊNƒBˆ[œ]ÈHØYÚ[œ]Ê\™ÜËœØÜš\\™ÜË™\™XİÜŠCBˆNƒBˆÛÛ\[Y™\ÜHÛÛ\[WØ˜XÚÙ[™
+[œ]ÖÈœÛİ\˜ÙH—K[œ]ÖÈ™\™XİÜˆ—K[œ]ÖÈœÛİ\˜ÙWÜÚLMˆ—K\™ÜË˜˜XÚÙ[™
+CBˆ^Ù\˜[Y][Û‘\œ›Üˆ\È^ÎƒBˆ™\ÜHØ›ØÚÙYØÛÛ\[WÜ™\Ü
+\™ÜË˜˜XÚÙ[™[œ]ÖÈ™\™XİÜˆ—KİŠ^ÊJCBˆÛÛ\[YHÃBˆ˜˜XÚÙ[™ˆ\™ÜË˜˜XÚÙ[™Bˆ˜ÛÛ\[WÜİ]\Èˆ˜›ØÚÙY‹Bˆ˜ÛÛ\[WÙ\œ›ÜˆˆİŠ^ÊKBˆ™^Xİİ^ˆ[œ]ÖÈœÛİ\˜ÙH—KBˆ™˜Yˆ›Û™KBˆ^Ú[YÜš]HˆÃBˆœÛİ\˜ÙWÜÚLMˆˆ[œ]ÖÈœÛİ\˜ÙWÜÚLMˆ—KBˆœÛİ\˜ÙWØÚ\˜Xİ\œÈˆ[Š[œ]ÖÈœÛİ\˜ÙH—JKBˆœÛİ\˜ÙWİ]Ø]\Èˆ[Š[œ]ÖÈœÛİ\˜ÙWØ]\È—JKBˆ™^Xİİ^Ü™\Ù\™YˆYKBˆKBˆCBˆš[\ÈHÈ˜ÛÛ\[YšœÛÛˆˆÛÛ\[Y˜Ø\Xš[]K\™\ÜšœÛÛˆˆ™\ÜCBˆİÜš]WØ\Y˜XİÊ\™ÜË›İ]š[\ËÚ[œ]Ú\Ú\Ê[œ]ÊK\™ÜË›İ™\Üš]K
+\™ÜËœØÜš\\™ÜË™\™XİÜŠJCBˆ™]\›ˆÈÜš][ˆˆÛÜY
+Ê™š[\Ë›X[šY™\İšœÛÛˆ—JK˜ÛÛ\[WÜİ]\Èˆ˜›ØÚÙY‹™\œ›ÜˆˆİŠ^Ê_KƒBˆš[\ÈHÈ˜ÛÛ\[YšœÛÛˆˆÛÛ\[Y˜Ø\Xš[]K\™\ÜšœÛÛˆˆ™\ÜCBˆİÜš]WØ\Y˜XİÊ\™ÜË›İ]š[\ËÚ[œ]Ú\Ú\Ê[œ]ÊK\™ÜË›İ™\Üš]K
+\™ÜËœØÜš\\™ÜË™\™XİÜŠJCBˆÛÙHHYˆ™\ÜÈœİ\ÜY—H[™›İİŠÛÛ\[YÈ˜ÛÛ\[WÜİ]\È—JKœİ\İÚ]
+˜›ØÚÙYŠH[ÙHƒBˆ™]\›ˆÈÜš][ˆˆÛÜY
+Ê™š[\Ë›X[šY™\İšœÛÛˆ—JK˜ÛÛ\[WÜİ]\ÈˆÛÛ\[YÈ˜ÛÛ\[WÜİ]\È—K˜˜XÚÙ[™ˆ\™ÜË˜˜XÚÙ[™KÛÙCBƒBƒB™YˆØÛÛ[X[™ØÚ[šÊ\™ÜÊNƒBˆ[œ]ÈHØYÚ[œ]Ê\™ÜËœØÜš\\™ÜË™\™XİÜŠCBˆÚ[šÜÈHZ[ØÚ[šÜÊ[œ]ÖÈœÛİ\˜ÙH—K[œ]ÖÈ™\™XİÜˆ—K\™ÜË›X^ØÚ\œË\™ÜË˜˜XÚÙ[™
+CBˆ™\ÜHØÛÛ›ÛÜ™\Ü
+\™ÜË˜˜XÚÙ[™[œ]ÖÈ™\™XİÜˆ—JCBˆš[\ÈHÈ˜Ú[šÜËšœÛÛˆˆÚ[šÜË˜Ø\Xš[]K\™\ÜšœÛÛˆˆ™\ÜCBˆİÜš]WØ\Y˜XİÊ\™ÜË›İ]š[\ËÚ[œ]Ú\Ú\Ê[œ]ÊK\™ÜË›İ™\Üš]K
+\™ÜËœØÜš\\™ÜË™\™XİÜŠJCBˆÛÙHHYˆ™\ÜÈœİ\ÜY—H[ÙHƒBˆ™]\›ˆÈÜš][ˆˆÛÜY
+Ê™š[\Ë›X[šY™\İšœÛÛˆ—JK˜Ú[š×ØÛİ[ˆ[ŠÚ[šÜÖÈ˜Ú[šÜÈ—JK˜˜XÚÙ[™ˆ\™ÜË˜˜XÚÙ[™KÛÙCBƒBƒB™YˆØÛÛ[X[™Ø[YÛ›Y[
+\™ÜÊNƒBˆÛİ\˜ÙKÛİ\˜ÙWØ]\ÈH™XYÜØÜš\
+\™ÜËœØÜš\
+CBˆÛİ\˜ÙWÜÚLMˆHÚLM—Ø]\ÊÛİ\˜ÙWØ]\ÊCBˆ[YÛ›Y[Ü]H]
+\™ÜË˜[YÛ›Y[
+CBˆNƒBˆ[YÛ›Y[[YÛ›Y[Ü˜]ÈH™XYÚœÛÛŠ[YÛ›Y[Ü]
+CBˆ™\ÜH]Y]Ø[YÛ›Y[
+Ûİ\˜ÙKÛİ\˜ÙWÜÚLM‹[YÛ›Y[
+CBˆ^Ù\˜[Y][Û‘\œ›Üˆ\È^ÎƒBˆNƒBˆ[YÛ›Y[Ü˜]ÈH[YÛ›Y[Ü]œ™XYØ]\Ê
+CBˆ^Ù\ÔÑ\œ›ÜƒBˆ[YÛ›Y[Ü˜]ÈHˆˆƒBˆ™\ÜHÃBˆœİ]\Èˆ‘RS‹BˆœÛİ\˜ÙWÜÚLMˆˆÛİ\˜ÙWÜÚLM‹Bˆ™\œ›ÜœÈˆÜİŠ^ÊWKBˆØ\›š[™ÜÈˆ×KBˆ˜[YÛ™YİÛÜ™Èˆ×KBˆ[˜[YÛ™YİÛÜ™Èˆ×KBˆ^ÛX]ÚˆÃBˆ›X]Ú\×ØY\—İÚ]\ÜXÙWÛ›Ü›X[^˜][Ûˆˆ˜[ÙKBˆœÛİ\˜ÙWØÛÛ\XİØÚ\˜Xİ\œÈˆ[Šˆ‹š›Ú[ŠÛİ\˜ÙKœÜ]
 
-def _json_bytes(data):
-    return (json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n").encode("utf-8")
-
-
-def _write_artifacts(out_dir, files, input_hashes, overwrite, input_paths):
-    output_dir = Path(out_dir)
-    # Preflight the whole batch before creating or replacing any artifacts.
-    for name in (*files, "manifest.json"):
-        target = output_dir / name
-        for input_path in map(Path, input_paths):
-            if (target.resolve() == input_path.resolve()
-                    or (target.exists() and input_path.exists()
-                        and target.samefile(input_path))):
-                raise ValidationError(
-                    f"output aliases input: {target} aliases {input_path}; "
-                    "choose a separate output directory")
-    try:
-        output_dir.mkdir(parents=True, exist_ok=True)
-    except OSError as exc:
-        raise VoiceDirectorError(f"cannot create output directory {output_dir}: {exc}") from exc
-    targets = {name: output_dir / name for name in files}
-    existing = [str(path) for path in targets.values() if path.exists()]
-    if existing and not overwrite:
-        raise OutputExistsError("refusing to overwrite existing output(s): " + ", ".join(existing) + "; pass --overwrite explicitly")
-
-    payloads = {name: _json_bytes(data) for name, data in files.items()}
-    output_hashes = {name: hashlib.sha256(payload).hexdigest() for name, payload in payloads.items()}
-    manifest = {
-        "schema_version": 1,
-        "tool": "voice-director",
-        "tool_version": "1.0.0",
-        "input_sha256": input_hashes,
-        "artifacts_sha256": output_hashes,
-        "provider_calls": 0,
-        "network_access": False,
-    }
-    payloads["manifest.json"] = _json_bytes(manifest)
-    manifest_path = targets.get("manifest.json", output_dir / "manifest.json")
-    if manifest_path.exists() and "manifest.json" not in targets and not overwrite:
-        raise OutputExistsError(f"refusing to overwrite existing output: {manifest_path}; pass --overwrite explicitly")
-
-    temp_paths = []
-    try:
-        for name, payload in payloads.items():
-            target = output_dir / name
-            with tempfile.NamedTemporaryFile(mode="wb", dir=output_dir, prefix=".voice-director-", suffix=".tmp", delete=False) as stream:
-                temp_path = Path(stream.name)
-                temp_paths.append(temp_path)
-                stream.write(payload)
-                stream.flush()
-                os.fsync(stream.fileno())
-        for temp_path, name in zip(temp_paths, payloads):
-            os.replace(temp_path, output_dir / name)
-        return manifest
-    except OSError as exc:
-        raise VoiceDirectorError(f"failed to write output artifacts under {output_dir}: {exc}") from exc
-    finally:
-        for temp_path in temp_paths:
-            try:
-                temp_path.unlink(missing_ok=True)
-            except OSError:
-                pass
-
-
-def _print_json(data, stream=None):
-    if stream is None:
-        stream = sys.stdout
-    stream.write(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
-
-
-def _input_hashes(inputs):
-    return {
-        "script_sha256": inputs["source_sha256"],
-        "director_sha256": inputs["director_sha256"],
-    }
-
-
-def _blocked_compile_report(backend, director, message):
-    report = _control_report(backend, director)
-    report["compile_status"] = "blocked"
-    report["compile_error"] = message
-    for name, detail in report["controls"].items():
-        if detail.get("requested"):
-            detail["status"] = "unsupported"
-            detail["applied"] = False
-            detail["reason"] = "compiler produced no backend draft: " + message
-    return report
-
-
-def _command_validate(args):
-    inputs = load_inputs(args.script, args.director)
-    return {
-        "valid": True,
-        "schema_version": 1,
-        "source_sha256": inputs["source_sha256"],
-        "source_characters": len(inputs["source"]),
-        "source_utf8_bytes": len(inputs["source_bytes"]),
-        "director_sha256": inputs["director_sha256"],
-        "segment_count": len(inputs["director"]["segments"]),
-        "providers_called": 0,
-    }, 0
-
-
-def _command_compile(args):
-    inputs = load_inputs(args.script, args.director)
-    try:
-        compiled, report = compile_backend(inputs["source"], inputs["director"], inputs["source_sha256"], args.backend)
-    except ValidationError as exc:
-        report = _blocked_compile_report(args.backend, inputs["director"], str(exc))
-        compiled = {
-            "backend": args.backend,
-            "compile_status": "blocked",
-            "compile_error": str(exc),
-            "exact_text": inputs["source"],
-            "draft": None,
-            "text_integrity": {
-                "source_sha256": inputs["source_sha256"],
-                "source_characters": len(inputs["source"]),
-                "source_utf8_bytes": len(inputs["source_bytes"]),
-                "exact_text_preserved": True,
-            },
-        }
-        files = {"compiled.json": compiled, "capability-report.json": report}
-        _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite, (args.script, args.director))
-        return {"written": sorted([*files, "manifest.json"]), "compile_status": "blocked", "error": str(exc)}, 2
-    files = {"compiled.json": compiled, "capability-report.json": report}
-    _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite, (args.script, args.director))
-    code = 0 if report["supported"] and not str(compiled["compile_status"]).startswith("blocked") else 2
-    return {"written": sorted([*files, "manifest.json"]), "compile_status": compiled["compile_status"], "backend": args.backend}, code
-
-
-def _command_chunk(args):
-    inputs = load_inputs(args.script, args.director)
-    chunks = build_chunks(inputs["source"], inputs["director"], args.max_chars, args.backend)
-    report = _control_report(args.backend, inputs["director"])
-    files = {"chunks.json": chunks, "capability-report.json": report}
-    _write_artifacts(args.out, files, _input_hashes(inputs), args.overwrite, (args.script, args.director))
-    code = 0 if report["supported"] else 2
-    return {"written": sorted([*files, "manifest.json"]), "chunk_count": len(chunks["chunks"]), "backend": args.backend}, code
-
-
-def _command_alignment(args):
-    source, source_bytes = read_script(args.script)
-    source_sha256 = sha256_bytes(source_bytes)
-    alignment_path = Path(args.alignment)
-    try:
-        alignment, alignment_raw = read_json(alignment_path)
-        report = audit_alignment(source, source_sha256, alignment)
-    except ValidationError as exc:
-        try:
-            alignment_raw = alignment_path.read_bytes()
-        except OSError:
-            alignment_raw = b""
-        report = {
-            "status": "FAIL",
-            "source_sha256": source_sha256,
-            "errors": [str(exc)],
-            "warnings": [],
-            "aligned_words": [],
-            "unaligned_words": [],
-            "text_match": {
-                "matches_after_whitespace_normalization": False,
-                "source_compact_characters": len("".join(source.split())),
-                "alignment_compact_characters": 0,
-                "matched_prefix_characters": 0,
-            },
-            "scope_note": "This checks supplied text/timestamps only; it is not an ASR or phonetic correctness audit.",
-        }
-    files = {"alignment-audit.json": report}
-    hashes = {"script_sha256": source_sha256, "alignment_sha256": sha256_bytes(alignment_raw)}
-    _write_artifacts(args.out, files, hashes, args.overwrite, (args.script, args.alignment))
-    return {"written": sorted([*files, "manifest.json"]), "status": report["status"], "error_count": len(report["errors"])}, 0 if report["status"] == "PASS" else 1
-
-
-def _command_editorial_gate(args):
-    return release_editorial_bundle(args.bundle, args.out, decisions=args.decisions), 0
-
-
-def _command_voice_screen(args):
-    payload, _ = read_json(args.map)
-    return validate_voice_screen_map(payload), 0
-
-
-def _command_visual_gate(args):
-    payload, _ = read_json(args.manifest)
-    return validate_visual_gate(payload, Path(args.manifest).resolve().parent,
-                                project_root=args.project_root, ffprobe_path=args.ffprobe,
-                                ffmpeg_path=args.ffmpeg), 0
-
-
-def _command_review_visual_assets(args):
-    return load_and_validate_visual_asset_review(args.manifest, args.narration, args.map), 0
-
-
-def _command_review_visual_quality(args):
-    return load_and_validate_visual_quality_review(args.manifest, project_root=args.project_root,
-                                                    ffprobe_path=args.ffprobe, ffmpeg_path=args.ffmpeg), 0
-
-
-def build_parser():
-    parser = argparse.ArgumentParser(prog="voice-director", description="Validate, release reviewed narration, and compile offline voice-direction artifacts; never calls TTS providers.")
-    subparsers = parser.add_subparsers(dest="command", required=True)
-
-    validate = subparsers.add_parser("validate", help="validate the immutable script and director map")
-    validate.add_argument("--script", required=True)
-    validate.add_argument("--director", required=True)
-    validate.set_defaults(handler=_command_validate)
-
-    compile_parser = subparsers.add_parser("compile", help="compile a backend-specific draft and capability report")
-    compile_parser.add_argument("--script", required=True)
-    compile_parser.add_argument("--director", required=True)
-    compile_parser.add_argument("--backend", required=True)
-    compile_parser.add_argument("--out", required=True)
-    compile_parser.add_argument("--overwrite", action="store_true")
-    compile_parser.set_defaults(handler=_command_compile)
-
-    chunk = subparsers.add_parser("chunk", help="create a lossless semantic chunk manifest")
-    chunk.add_argument("--script", required=True)
-    chunk.add_argument("--director", required=True)
-    chunk.add_argument("--backend", required=True)
-    chunk.add_argument("--max-chars", required=True, type=int)
-    chunk.add_argument("--out", required=True)
-    chunk.add_argument("--overwrite", action="store_true")
-    chunk.set_defaults(handler=_command_chunk)
-
-    alignment = subparsers.add_parser("alignment-audit", help="audit WhisperX-style alignment JSON without inventing timestamps")
-    alignment.add_argument("--script", required=True)
-    alignment.add_argument("--alignment", required=True)
-    alignment.add_argument("--out", required=True)
-    alignment.add_argument("--overwrite", action="store_true")
-    alignment.set_defaults(handler=_command_alignment)
-
-    editorial_gate = subparsers.add_parser("editorial-gate", help="review uncertainty with the user, then validate and release exact narration bytes")
-    editorial_gate.add_argument("--bundle", required=True)
-    editorial_gate.add_argument("--out", required=True)
-    editorial_gate.add_argument("--decisions", help="hash-bound human-decisions.json created after reviewing an uncertainty packet")
-    editorial_gate.set_defaults(handler=_command_editorial_gate)
-
-    voice_screen = subparsers.add_parser("validate-voice-screen", help="validate a private courseware voice/screen beat map")
-    voice_screen.add_argument("--map", required=True, help="private voice-screen-map.json path")
-    voice_screen.set_defaults(handler=_command_voice_screen)
-
-    visual_gate = subparsers.add_parser("visual-gate", help="require user selection of one of three visual directions and approval of its design sample")
-    visual_gate.add_argument("--manifest", required=True, help="private visual-gate.json path")
-    visual_gate.add_argument("--project-root", help="HyperFrames project directory; required when validating a design sample")
-    visual_gate.add_argument("--ffprobe", help="FFprobe executable; defaults to ffprobe on PATH")
-    visual_gate.add_argument("--ffmpeg", help="FFmpeg executable; defaults to ffmpeg on PATH")
-    visual_gate.set_defaults(handler=_command_visual_gate)
-
-    asset_review = subparsers.add_parser("review-visual-assets", help="validate Internet search evidence and the harness's per-beat visual suitability review")
-    asset_review.add_argument("--manifest", required=True, help="private visual-asset-review.json path")
-    asset_review.add_argument("--narration", required=True, help="exact private narration.txt used for the review")
-    asset_review.add_argument("--map", required=True, help="private voice-screen-map.json path")
-    asset_review.set_defaults(handler=_command_review_visual_assets)
-
-    visual_quality = subparsers.add_parser("review-visual-quality", help="probe and validate private sample/final-video quality evidence")
-    visual_quality.add_argument("--manifest", required=True, help="private visual-quality-review.json path")
-    visual_quality.add_argument("--project-root", required=True, help="HyperFrames project root whose file inventory is hash-checked")
-    visual_quality.add_argument("--ffprobe", help="FFprobe executable; defaults to ffprobe on PATH")
-    visual_quality.add_argument("--ffmpeg", help="FFmpeg executable; defaults to ffmpeg on PATH")
-    visual_quality.set_defaults(handler=_command_review_visual_quality)
-
-    capabilities = subparsers.add_parser("capabilities", help="show frozen, declared backend capability profiles")
-    capabilities.add_argument("--backend")
-    capabilities.set_defaults(handler=None)
-    return parser
-
-
-def main(argv=None):
-    parser = build_parser()
-    args = parser.parse_args(argv)
-    if args.command == "capabilities":
-        if args.backend:
-            profile = get_profile(args.backend)
-            if profile is None:
-                _print_json({
-                    "backend": args.backend,
-                    "supported": False,
-                    "error": "unknown backend; no fallback exists",
-                    "license_review": get_license_review(args.backend),
-                })
-                return 2
-            _print_json({"backend": args.backend, "supported": True, **profile})
-            return 0
-        _print_json({"profiles": list_profiles(), "live_discovery": False, "provider_calls": 0})
-        return 0
-    try:
-        result, code = args.handler(args)
-        _print_json(result)
-        return code
-    except HumanReviewRequired as exc:
-        _print_json(exc.report)
-        return 3
-    except VoiceDirectorError as exc:
-        _print_json({"error": str(exc), "status": "FAIL"}, stream=sys.stderr)
-        return 2
-    except OSError as exc:
-        _print_json({"error": str(exc), "status": "FAIL"}, stream=sys.stderr)
-        return 2
+JJKBˆ˜[YÛ›Y[ØÛÛ\XİØÚ\˜Xİ\œÈˆBˆ›X]ÚYÜ™Yš^ØÚ\˜Xİ\œÈˆBˆKBˆœØÛÜWÛ›İHˆ•\ÈÚXÚÜÈİ\YY^İ[Y\İ[\ÈÛ›NÈ]\È›İ[ˆTÔˆÜˆÛ™]XÈÛÜœ™Xİ™\ÜÈ]Y]ˆ‹BˆCBˆš[\ÈHÈ˜[YÛ›Y[X]Y]šœÛÛˆˆ™\ÜCBˆ\Ú\ÈHÈœØÜš\ÜÚLMˆˆÛİ\˜ÙWÜÚLM‹˜[YÛ›Y[ÜÚLMˆˆÚLM—Ø]\Ê[YÛ›Y[Ü˜]Ê_CBˆİÜš]WØ\Y˜XİÊ\™ÜË›İ]š[\Ë\Ú\Ë\™ÜË›İ™\Üš]K
+\™ÜËœØÜš\\™ÜË˜[YÛ›Y[
+JCBˆ™]\›ˆÈÜš][ˆˆÛÜY
+Ê™š[\Ë›X[šY™\İšœÛÛˆ—JKœİ]\Èˆ™\ÜÈœİ]\È—K™\œ›Ü—ØÛİ[ˆ[Š™\ÜÈ™\œ›ÜœÈ—J_KYˆ™\ÜÈœİ]\È—HOH”TÔÈˆ[ÙHCBƒBƒB™YˆØÛÛ[X[™ÙY]ÜšX[ÙØ]J\™ÜÊNƒBˆ™]\›ˆ™[X\ÙWÙY]ÜšX[Ø[™J\™ÜË˜[™K\™ÜË›İ]XÚ\Ú[ÛœÏX\™ÜË™XÚ\Ú[ÛœÊKBƒBƒB™YˆØÛÛ[X[™İ›ÚXÙWÜØÜ™Y[Š\™ÜÊNƒBˆ^[ØYÈH™XYÚœÛÛŠ\™ÜË›X\
+CBˆ™]\›ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+KBƒBƒB™YˆØÛÛ[X[™İš\İX[ÙØ]J\™ÜÊNƒBˆ^[ØYÈH™XYÚœÛÛŠ\™ÜË›X[šY™\İ
+CBˆ™]\›ˆ˜[Y]Wİš\İX[ÙØ]J^[ØY]
+\™ÜË›X[šY™\İ
+Kœ™\ÛÛ™J
+Kœ\™[Bˆ›Ú™XİÜ›ÛİX\™ÜËœ›Ú™XİÜ›Ûİ™œ›Ø™WÜ]X\™ÜË™™œ›Ø™KBˆ™›\Y×Ü]X\™ÜË™™›\YÊKBƒBƒB™YˆØÛÛ[X[™Ü™]šY]×İš\İX[Ø\ÜÙ]Ê\™ÜÊNƒBˆ™]\›ˆØYØ[™İ˜[Y]Wİš\İX[Ø\ÜÙ]Ü™]šY]Ê\™ÜË›X[šY™\İ\™ÜË›˜\œ˜][Û‹\™ÜË›X\
+KBƒBƒB™YˆØÛÛ[X[™Ü™]šY]×İš\İX[Ü]X[]J\™ÜÊNƒBˆ™]\›ˆØYØ[™İ˜[Y]Wİš\İX[Ü]X[]WÜ™]šY]Ê\™ÜË›X[šY™\İ›Ú™XİÜ›ÛİX\™ÜËœ›Ú™XİÜ›ÛİBˆ™œ›Ø™WÜ]X\™ÜË™™œ›Ø™K™›\Y×Ü]X\™ÜË™™›\YÊKBƒBƒB™YˆØÛÛ[X[™İš\İX[ØÛİ\œÙWÙØ]J\™ÜÊNƒBˆ^[ØYÈH™XYÚœÛÛŠ\™ÜË›X[šY™\İ
+CBˆ™]\›ˆ˜[Y]WØÛİ\œÙWİš\İX[ÛX[šY™\İ
+Bˆ^[ØY]
+\™ÜËœ›Ú™XİÜ›Ûİ
+KBˆ]
+\™ÜË˜\›İ™YÜØ[\\×Ü›Ûİ
+HYˆ\™ÜË˜\›İ™YÜØ[\\×Ü›Ûİ[ÙH›Û™KBˆ
+KBƒBƒB™YˆZ[Ü\œÙ\Š
+NƒBˆ\œÙ\ˆH\™Ü\œÙK\™İ[Y[\œÙ\Š›ÙÏH›ÚXÙKY\™XİÜˆ‹\ØÜš\[ÛH•˜[Y]K™[X\ÙH™]šY]ÙY˜\œ˜][Û‹[™ÛÛ\[HÙ™›[™H›ÚXÙKY\™Xİ[Ûˆ\Y˜XİÎÈ™]™\ˆØ[ÈÈ›İšY\œËˆŠCBˆİXœ\œÙ\œÈH\œÙ\‹˜YÜİXœ\œÙ\œÊ\İH˜ÛÛ[X[™‹™\]Z\™YUYJCBƒBˆ˜[Y]HHİXœ\œÙ\œË˜YÜ\œÙ\Š˜[Y]H‹[H˜[Y]HH[[]]X›HØÜš\[™\™XİÜˆX\ŠCBˆ˜[Y]K˜YØ\™İ[Y[
+‹K\ØÜš\‹™\]Z\™YUYJCBˆ˜[Y]K˜YØ\™İ[Y[
+‹KY\™XİÜˆ‹™\]Z\™YUYJCBˆ˜[Y]KœÙ]ÙY˜][Ê[™\WØÛÛ[X[™İ˜[Y]JCBƒBˆÛÛ\[WÜ\œÙ\ˆHİXœ\œÙ\œË˜YÜ\œÙ\Š˜ÛÛ\[H‹[H˜ÛÛ\[HH˜XÚÙ[™\ÜXÚYšXÈ˜Y[™Ø\Xš[]H™\ÜŠCBˆÛÛ\[WÜ\œÙ\‹˜YØ\™İ[Y[
+‹K\ØÜš\‹™\]Z\™YUYJCBˆÛÛ\[WÜ\œÙ\‹˜YØ\™İ[Y[
+‹KY\™XİÜˆ‹™\]Z\™YUYJCBˆÛÛ\[WÜ\œÙ\‹˜YØ\™İ[Y[
+‹KX˜XÚÙ[™‹™\]Z\™YUYJCBˆÛÛ\[WÜ\œÙ\‹˜YØ\™İ[Y[
+‹K[İ]‹™\]Z\™YUYJCBˆÛÛ\[WÜ\œÙ\‹˜YØ\™İ[Y[
+‹K[İ™\Üš]H‹Xİ[ÛHœİÜ™WİYHŠCBˆÛÛ\[WÜ\œÙ\‹œÙ]ÙY˜][Ê[™\WØÛÛ[X[™ØÛÛ\[JCBƒBˆÚ[šÈHİXœ\œÙ\œË˜YÜ\œÙ\Š˜Ú[šÈ‹[H˜Ü™X]HHÜÜÛ\ÜÈÙ[X[XÈÚ[šÈX[šY™\İŠCBˆÚ[šË˜YØ\™İ[Y[
+‹K\ØÜš\‹™\]Z\™YUYJCBˆÚ[šË˜YØ\™İ[Y[
+‹KY\™XİÜˆ‹™\]Z\™YUYJCBˆÚ[šË˜YØ\™İ[Y[
+‹KX˜XÚÙ[™‹™\]Z\™YUYJCBˆÚ[šË˜YØ\™İ[Y[
+‹K[X^XÚ\œÈ‹™\]Z\™YUYK\OZ[
+CBˆÚ[šË˜YØ\™İ[Y[
+‹K[İ]‹™\]Z\™YUYJCBˆÚ[šË˜YØ\™İ[Y[
+‹K[İ™\Üš]H‹Xİ[ÛHœİÜ™WİYHŠCBˆÚ[šËœÙ]ÙY˜][Ê[™\WØÛÛ[X[™ØÚ[šÊCBƒBˆ[YÛ›Y[HİXœ\œÙ\œË˜YÜ\œÙ\Š˜[YÛ›Y[X]Y]‹[H˜]Y]Ú\Ü\–\İ[H[YÛ›Y[”ÓÓˆÚ]İ][™[[™È[Y\İ[\ÈŠCBˆ[YÛ›Y[˜YØ\™İ[Y[
+‹K\ØÜš\‹™\]Z\™YUYJCBˆ[YÛ›Y[˜YØ\™İ[Y[
+‹KX[YÛ›Y[‹™\]Z\™YUYJCBˆ[YÛ›Y[˜YØ\™İ[Y[
+‹K[İ]‹™\]Z\™YUYJCBˆ[YÛ›Y[˜YØ\™İ[Y[
+‹K[İ™\Üš]H‹Xİ[ÛHœİÜ™WİYHŠCBˆ[YÛ›Y[œÙ]ÙY˜][Ê[™\WØÛÛ[X[™Ø[YÛ›Y[
+CBƒBˆY]ÜšX[ÙØ]HHİXœ\œÙ\œË˜YÜ\œÙ\Š™Y]ÜšX[YØ]H‹[Hœ™]šY]È[˜Ù\Z[HÚ]H\Ù\‹[ˆ˜[Y]H[™™[X\ÙH^Xİ˜\œ˜][Ûˆ]\ÈŠCBˆY]ÜšX[ÙØ]K˜YØ\™İ[Y[
+‹KX[™H‹™\]Z\™YUYJCBˆY]ÜšX[ÙØ]K˜YØ\™İ[Y[
+‹K[İ]‹™\]Z\™YUYJCBˆY]ÜšX[ÙØ]K˜YØ\™İ[Y[
+‹KYXÚ\Ú[ÛœÈ‹[Hš\ÚX›İ[™[X[‹YXÚ\Ú[ÛœËšœÛÛˆÜ™X]YY\ˆ™]šY]Ú[™È[ˆ[˜Ù\Z[HXÚÙ]ŠCBˆY]ÜšX[ÙØ]KœÙ]ÙY˜][Ê[™\WØÛÛ[X[™ÙY]ÜšX[ÙØ]JCBƒBˆ›ÚXÙWÜØÜ™Y[ˆHİXœ\œÙ\œË˜YÜ\œÙ\Š˜[Y]K]›ÚXÙK\ØÜ™Y[ˆ‹[H˜[Y]HHš]˜]HÛİ\œÙ]Ø\™H›ÚXÙKÜØÜ™Y[ˆ™X]X\ŠCBˆ›ÚXÙWÜØÜ™Y[‹˜YØ\™İ[Y[
+‹K[X\‹™\]Z\™YUYK[Hœš]˜]H›ÚXÙK\ØÜ™Y[‹[X\šœÛÛˆ]ŠCBˆ›ÚXÙWÜØÜ™Y[‹œÙ]ÙY˜][Ê[™\WØÛÛ[X[™İ›ÚXÙWÜØÜ™Y[ŠCBƒBˆš\İX[ÙØ]HHİXœ\œÙ\œË˜YÜ\œÙ\Šš\İX[YØ]H‹[Hœ™\]Z\™H\Ù\ˆÙ[Xİ[ÛˆÙˆÛ™HÙˆ™YHš\İX[\™Xİ[ÛœÈ[™\›İ˜[Ùˆ]È\ÚYÛˆØ[\HŠCBˆš\İX[ÙØ]K˜YØ\™İ[Y[
+‹K[X[šY™\İ‹™\]Z\™YUYK[Hœš]˜]Hš\İX[YØ]KšœÛÛˆ]ŠCBˆš\İX[ÙØ]K˜YØ\™İ[Y[
+‹K\›Ú™Xİ\›Ûİ‹[H’\\‘œ˜[Y\È›Ú™Xİ\™XİÜNÈ™\]Z\™YÚ[ˆ˜[Y][™ÈH\ÚYÛˆØ[\HŠCBˆš\İX[ÙØ]K˜YØ\™İ[Y[
+‹KY™œ›Ø™H‹[H‘‘œ›Ø™H^Xİ]X›NÈY˜][ÈÈ™œ›Ø™HÛˆUŠCBˆš\İX[ÙØ]K˜YØ\™İ[Y[
+‹KY™›\YÈ‹[H‘‘›\YÈ^Xİ]X›NÈY˜][ÈÈ™›\YÈÛˆUŠCBˆš\İX[ÙØ]KœÙ]ÙY˜][Ê[™\WØÛÛ[X[™İš\İX[ÙØ]JCBƒBˆ\ÜÙ]Ü™]šY]ÈHİXœ\œÙ\œË˜YÜ\œÙ\Šœ™]šY]Ë]š\İX[X\ÜÙ]È‹[H˜[Y]H[\›™]ÙX\˜Ú]šY[˜ÙH[™H\›™\ÜÉÜÈ\‹X™X]š\İX[İZ]Xš[]H™]šY]ÈŠCBˆ\ÜÙ]Ü™]šY]Ë˜YØ\™İ[Y[
+‹K[X[šY™\İ‹™\]Z\™YUYK[Hœš]˜]Hš\İX[X\ÜÙ]\™]šY]ËšœÛÛˆ]ŠCBˆ\ÜÙ]Ü™]šY]Ë˜YØ\™İ[Y[
+‹K[˜\œ˜][Ûˆ‹™\]Z\™YUYK[H™^Xİš]˜]H˜\œ˜][Û‹\ÙY›ÜˆH™]šY]ÈŠCBˆ\ÜÙ]Ü™]šY]Ë˜YØ\™İ[Y[
+‹K[X\‹™\]Z\™YUYK[Hœš]˜]H›ÚXÙK\ØÜ™Y[‹[X\šœÛÛˆ]ŠCBˆ\ÜÙ]Ü™]šY]ËœÙ]ÙY˜][Ê[™\WØÛÛ[X[™Ü™]šY]×İš\İX[Ø\ÜÙ]ÊCBƒBˆš\İX[Ü]X[]HHİXœ\œÙ\œË˜YÜ\œÙ\Šœ™]šY]Ë]š\İX[\]X[]H‹[Hœ›Ø™H[™˜[Y]Hš]˜]HØ[\KÙš[˜[]šY[È]X[]H]šY[˜ÙHŠCBˆš\İX[Ü]X[]K˜YØ\™İ[Y[
+‹K[X[šY™\İ‹™\]Z\™YUYK[Hœš]˜]Hš\İX[\]X[]K\™]šY]ËšœÛÛˆ]ŠCBˆš\İX[Ü]X[]K˜YØ\™İ[Y[
+‹K\›Ú™Xİ\›Ûİ‹™\]Z\™YUYK[H’\\‘œ˜[Y\È›Ú™Xİ›ÛİÚÜÙHš[H[™[ÜH\È\ÚXÚXÚÙYŠCBˆš\İX[Ü]X[]K˜YØ\™İ[Y[
+‹KY™œ›Ø™H‹[H‘‘œ›Ø™H^Xİ]X›NÈY˜][ÈÈ™œ›Ø™HÛˆUŠCBˆš\İX[Ü]X[]K˜YØ\™İ[Y[
+‹KY™›\YÈ‹[H‘‘›\YÈ^Xİ]X›NÈY˜][ÈÈ™›\YÈÛˆUŠCBˆš\İX[Ü]X[]KœÙ]ÙY˜][Ê[™\WØÛÛ[X[™Ü™]šY]×İš\İX[Ü]X[]JCBƒBˆš\İX[ØÛİ\œÙHHİXœ\œÙ\œË˜YÜ\œÙ\Šš\İX[XÛİ\œÙKYØ]H‹[Hœ™\]Z\™HH™]È]]Ü™YÛÛ\ÜÚ][Ûˆ›Üˆ]™\HÛİ\˜ÙHØÙ[™NÈ›ÈYØXŞHš\İX[˜[˜XÚÈŠCBˆš\İX[ØÛİ\œÙK˜YØ\™İ[Y[
+‹K[X[šY™\İ‹™\]Z\™YUYK[Hœš]˜]HÛİ\œÙK]š\İX[[X[šY™\İšœÛÛˆ]ŠCBˆš\İX[ØÛİ\œÙK˜YØ\™İ[Y[
+‹K\›Ú™Xİ\›Ûİ‹™\]Z\™YUYK[Hœš]˜]H\\‘œ˜[Y\È›Ú™Xİ›ÛİŠCBˆš\İX[ØÛİ\œÙK˜YØ\™İ[Y[
+‹KX\›İ™Y\Ø[\\Ë\›Ûİ‹™\]Z\™YUYK[H\İY›ÛİÛÛZ[š[™ÈHÛÈ^Xİ\›İ™YØ[\H\Y˜XİÈŠCBˆš\İX[ØÛİ\œÙKœÙ]ÙY˜][Ê[™\WØÛÛ[X[™İš\İX[ØÛİ\œÙWÙØ]JCBƒBˆØ\Xš[]Y\ÈHİXœ\œÙ\œË˜YÜ\œÙ\Š˜Ø\Xš[]Y\È‹[HœÚİÈœ›Ş™[‹XÛ\™Y˜XÚÙ[™Ø\Xš[]H›Ùš[\ÈŠCBˆØ\Xš[]Y\Ë˜YØ\™İ[Y[
+‹KX˜XÚÙ[™ŠCBˆØ\Xš[]Y\ËœÙ]ÙY˜][Ê[™\S›Û™JCBˆ™]\›ˆ\œÙ\ƒBƒBƒB™YˆXZ[Š\™İS›Û™JNƒBˆ\œÙ\ˆHZ[Ü\œÙ\Š
+CBˆ\™ÜÈH\œÙ\‹œ\œÙWØ\™ÜÊ\™İŠCBˆYˆ\™ÜË˜ÛÛ[X[™OH˜Ø\Xš[]Y\ÈƒBˆYˆ\™ÜË˜˜XÚÙ[™ƒBˆ›Ùš[HHÙ]Ü›Ùš[J\™ÜË˜˜XÚÙ[™
+CBˆYˆ›Ùš[H\È›Û™NƒBˆÜš[ÚœÛÛŠÃBˆ˜˜XÚÙ[™ˆ\™ÜË˜˜XÚÙ[™Bˆœİ\ÜYˆ˜[ÙKBˆ™\œ›Üˆˆ[šÛ›İÛˆ˜XÚÙ[™È›È˜[˜XÚÈ^\İÈ‹Bˆ›XÙ[œÙWÜ™]šY]ÈˆÙ]ÛXÙ[œÙWÜ™]šY]Ê\™ÜË˜˜XÚÙ[™
+KBˆJCBˆ™]\›ˆƒBˆÜš[ÚœÛÛŠÈ˜˜XÚÙ[™ˆ\™ÜË˜˜XÚÙ[™œİ\ÜYˆYK
+Šœ›Ùš[_JCBˆ™]\›ˆBˆÜš[ÚœÛÛŠÈœ›Ùš[\Èˆ\İÜ›Ùš[\Ê
+K›]™WÙ\ØÛİ™\Hˆ˜[ÙKœ›İšY\—ØØ[ÈˆJCBˆ™]\›ˆBˆNƒBˆ™\İ[ÛÙHH\™ÜËš[™\Š\™ÜÊCBˆÜš[ÚœÛÛŠ™\İ[
+CBˆ™]\›ˆÛÙCBˆ^Ù\[X[”™]šY]Ô™\]Z\™Y\È^ÎƒBˆÜš[ÚœÛÛŠ^Ëœ™\Ü
+CBˆ™]\›ˆÃBˆ^Ù\›ÚXÙQ\™XİÜ‘\œ›Üˆ\È^ÎƒBˆÜš[ÚœÛÛŠÈ™\œ›ÜˆˆİŠ^ÊKœİ]\Èˆ‘RSŸKİ™X[O\Ş\Ëœİ\œŠCBˆ™]\›ˆƒBˆ^Ù\ÔÑ\œ›Üˆ\È^ÎƒBˆÜš[ÚœÛÛŠÈ™\œ›ÜˆˆİŠ^ÊKœİ]\Èˆ‘RSŸKİ™X[O\Ş\Ëœİ\œŠCBˆ™]\›ˆƒB

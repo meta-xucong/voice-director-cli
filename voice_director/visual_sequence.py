@@ -1,202 +1,145 @@
-"""Structural validation for harness-authored, cross-beat visual sequences."""
+Û^š›bh¥êß¢¹­…â'ŠØš–,ŞçÚº[C®+Ş²Š^­«b¢z'¶…ŠW’ÊË^ššè¾'^­ö¢•çHˆˆ”İXİ\˜[˜[Y][Ûˆ›Üˆ\›™\ÜËX]]Ü™YÜ›ÜÜËX™X]š\İX[Ù\]Y[˜Ù\Ëˆˆˆ‚‚š[\ÜX]‚™œ›ÛH™\œ›ÜœÈ[\Ü˜[Y][Û‘\œ›Ü‚‚‚—ÔÕQÑTÈH
+˜ÛÛ^ØH‹™]Z[ØH‹˜ÛÛ^Øˆ‹™]Z[Øˆ‹œŞ[\Ú\ÈŠB—ÓSÕ‘SQS•ÈHÈœÛİ\˜ÙWÛ[šÙYŞ›ÛÛH‹›X\Ú×Ü™]™X[‹›X]ÚYÜ\Ú‹œÛYWØ[YÛˆŸB—ÑPTÒS‘ÔÈHÈ™X\ÙWÚ[—Ûİ]ŸB—ĞÓÓ•VĞPÒÑÔ“ÕS‘ÈHÈ˜›\œ™YÜÛİ\˜ÙH‹œ™[[İ™YÛÜ—Ü™\XÙYŸB—ÓPVÔVSÑSQS”ÒSÓˆHWÌÌ‚‚™YˆÛØš™Xİ
+˜[YKX™[
+N‚ˆYˆ›İ\Ú[œİ[˜ÙJ˜[YKXİ
+N‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÛX™[H]\İ™H[ˆØš™XİŠBˆ™]\›ˆ˜[YB‚‚™Yˆİ^
+˜[YKX™[
+N‚ˆYˆ›İ\Ú[œİ[˜ÙJ˜[YKİŠHÜˆ›İ˜[YKœİš\
 
-import math
+N‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÛX™[H]\İ™HH›Û‹Y[\Hİš[™ÈŠBˆ™]\›ˆ˜[YB‚‚™YˆÛ[X™\Š˜[YKX™[
+‹Z[š[][OLX^[][OS›Û™JN‚ˆYˆ
+\Ú[œİ[˜ÙJ˜[YK›ÛÛ
+HÜˆ›İ\Ú[œİ[˜ÙJ˜[YK
+[›Ø]
+JBˆÜˆ
+\Ú[œİ[˜ÙJ˜[YK›Ø]
+H[™›İX]š\Ùš[š]J˜[YJJHÜˆ˜[YHZ[š[][JN‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÛX™[H]\İ™HHš[š]H[X™\ˆHÛZ[š[][_HŠBˆYˆX^[][H\È›İ›Û™H[™˜[YHˆX^[][N‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÛX™[H]\İ™HHÛX^[][_HŠBˆ™]\›ˆ˜[YB‚‚™YˆÜ^[Û[X™\Š˜[YKX™[
+‹Z[š[][OLX^[][OS›Û™JN‚ˆ˜[YHHÛ[X™\Š˜[YKX™[Z[š[][O[Z[š[][KX^[][O[X^[][JBˆYˆ›İ\Ú[œİ[˜ÙJ˜[YK[
+H[™›İ˜[YKš\×Ú[YÙ\Š
+N‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÛX™[H]\İ[YÛˆÈ[ˆ[YÙ\ˆ^[ŠBˆ™]\›ˆ˜[YB‚‚™Yˆ˜[Y]Wİš\İX[ÜÙ\]Y[˜Ù\Ê^[ØY
+N‚ˆˆˆ•˜[Y]HHš\İX[\Ù\]Y[˜ÙHXÛ\˜][ÛˆÚ]İ]\ÜÙ\[™ÈÙ[X[XÈ]X[]K‚‚ˆH\›™\ÜÈ]]ÜœÈHÙ\]Y[˜ÙHY\ˆ[\œ™][™ÈH˜\œ˜][Ûˆ[™™]šY]Ú[™Âˆ\ÜÙ]Ëˆ\È[˜İ[ÛˆÛ›H™\šYšY\ÈXÛ\™YİXİ\™K]šY[˜ÙH[šÜÈ[™Ù[ÛY]K‚ˆˆˆ‚ˆÙ\]Y[˜Ù\ÈH^[ØY™Ù]
+š\İX[ÜÙ\]Y[˜Ù\È‹×JBˆYˆ›İ\Ú[œİ[˜ÙJÙ\]Y[˜Ù\Ë\İ
+N‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠš\İX[ÜÙ\]Y[˜Ù\È]\İ™H[ˆ\œ˜^HŠB‚ˆ™X]ÈH^[ØY™Ù]
+˜™X]È‹×JBˆWÚYHØ™X]ÈšY—Nˆ
+[™^™X]
+H›Üˆ[™^™X][ˆ[[Y\˜]J™X]Ê_BˆÙY[—ÚYÈHÙ]
 
-from .errors import ValidationError
+Bˆ™\ÜÈH×Bˆ›ÜˆÙ\]Y[˜ÙWÚ[™^Ù\]Y[˜ÙH[ˆ[[Y\˜]JÙ\]Y[˜Ù\ËJN‚ˆ™Yš^Hˆš\İX[ÜÙ\]Y[˜Ù\ÖŞÜÙ\]Y[˜ÙWÚ[™^WH‚ˆÙ\]Y[˜ÙHHÛØš™Xİ
+Ù\]Y[˜ÙK™Yš^
+BˆÙ\]Y[˜ÙWÚYHİ^
+Ù\]Y[˜ÙK™Ù]
+šYŠKˆÜ™Yš^KšYŠBˆYˆÙ\]Y[˜ÙWÚY[ˆÙY[—ÚYÎ‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆ™\XØ]Hš\İX[Ù\]Y[˜ÙHYˆÜÙ\]Y[˜ÙWÚYHŠBˆÙY[—ÚYË˜Y
+Ù\]Y[˜ÙWÚY
+BˆYˆÙ\]Y[˜ÙK™Ù]
+œ]\›ˆŠHOH˜ÛÛ˜\İÜ™]™X[‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^Kœ]\›ˆ]\İ™HÛÛ˜\İÜ™]™X[ŠBˆİ^
+Ù\]Y[˜ÙK™Ù]
+šYÙÙ\ˆŠKˆÜ™Yš^KšYÙÙ\ˆŠBˆİ^
+Ù\]Y[˜ÙK™Ù]
+ZÙX]Ø^HŠKˆÜ™Yš^KZÙX]Ø^HŠB‚ˆİYÙWØ™X]ÈHÛØš™Xİ
+Ù\]Y[˜ÙK™Ù]
+œİYÙWØ™X]ÈŠKˆÜ™Yš^KœİYÙWØ™X]ÈŠBˆYˆÙ]
+İYÙWØ™X]ÊHOHÙ]
+ÔÕQÑTÊN‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^KœİYÙWØ™X]È]\İXÛ\™H^XİH×ÔÕQÑTßHŠBˆİYÙWÚYÈH×İ^
+İYÙWØ™X]ÖÜİYÙWKˆÜ™Yš^KœİYÙWØ™X]ËÜİYÙ_HŠH›ÜˆİYÙH[ˆÔÕQÑT×Bˆ[šÛ›İÛˆHØ™X]ÚY›Üˆ™X]ÚY[ˆİYÙWÚYÈYˆ™X]ÚY›İ[ˆWÚYBˆYˆ[šÛ›İÛ‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^H™Y™\™[˜Ù\È[šÛ›İÛˆ™X]İ[šÛ›İÛ–Ì_HŠBˆ[™XÙ\ÈHØWÚYØ™X]ÚYVÌH›Üˆ™X]ÚY[ˆİYÙWÚY×BˆYˆ[™XÙ\ÈOHÛÜY
+[™XÙ\ÊHÜˆ[ŠÙ]
+[™XÙ\ÊJHOH[ŠÔÕQÑTÊN‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^KœİYÙWØ™X]È]\İ™Y™\™[˜ÙHš]™H\İ[˜İ™X]È[ˆXXÚ[™ÈÜ™\ˆŠBˆ›ÜˆİYÙH[ˆÔÕQÑTÎ‚ˆ™X]ÚYHİ^
+İYÙWØ™X]ÖÜİYÙWKˆÜ™Yš^KœİYÙWØ™X]ËÜİYÙ_HŠBˆË™X]HWÚYØ™X]ÚYBˆX\šÙ\ˆHÛØš™Xİ
+™X]™Ù]
+š\İX[ÜÙ\]Y[˜ÙHŠKˆ˜™X]ÖŞØ™X]ÚYWKš\İX[ÜÙ\]Y[˜ÙHŠBˆYˆX\šÙ\‹™Ù]
+šYŠHOHÙ\]Y[˜ÙWÚYÜˆX\šÙ\‹™Ù]
+œİYÙHŠHOHİYÙN‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆ˜™X]Ø™X]ÚYH\È›İX\šÙY\ÈÜÙ\]Y[˜ÙWÚYKŞÜİYÙ_HŠBˆ^XİYÜ\XÚ\[H
+˜HˆYˆİYÙK™[™İÚ]
+—ØHŠH[ÙH˜ˆˆYˆİYÙK™[™İÚ]
+—ØˆŠH[ÙH›Û™JBˆYˆ^XİYÜ\XÚ\[[™X\šÙ\‹™Ù]
+œ\XÚ\[ÚYŠHOH^XİYÜ\XÚ\[‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆ˜™X]Ø™X]ÚYH]\İ˜[YH\XÚ\[Ù^XİYÜ\XÚ\[HŠBˆÛ[X™\Š™X]™Ù]
+™\˜][Û—ÜÙXÛÛ™ÈŠKˆ˜™X]Ø™X]ÚYK™\˜][Û—ÜÙXÛÛ™È‹Z[š[][OLKKX^[][OLLŠBˆ\XÚ\[ÈHÙ\]Y[˜ÙK™Ù]
+œ\XÚ\[ÈŠBˆYˆ›İ\Ú[œİ[˜ÙJ\XÚ\[Ë\İ
+HÜˆ[Š\XÚ\[ÊHOH‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^Kœ\XÚ\[È]\İÛÛZ[ˆ^XİHÛÈ\XÚ\[ÈŠBˆ\XÚ\[ÚYÈHÙ]
 
+Bˆ›Üˆ\XÚ\[Ú[™^\XÚ\[[ˆ[[Y\˜]J\XÚ\[ËJN‚ˆHˆÜ™Yš^Kœ\XÚ\[ÖŞÜ\XÚ\[Ú[™^WH‚ˆ\XÚ\[HÛØš™Xİ
+\XÚ\[
+Bˆ\XÚ\[ÚYHİ^
+\XÚ\[™Ù]
+šYŠKˆÜKšYŠBˆYˆ\XÚ\[ÚY[ˆ\XÚ\[ÚYÎ‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^H\XÚ\[YÈ]\İ™H\İ[˜İŠBˆ\XÚ\[ÚYË˜Y
+\XÚ\[ÚY
+Bˆİ^
+\XÚ\[™Ù]
+›X™[ŠKˆÜK›X™[ŠBˆYˆ\XÚ\[™Ù]
+˜]][XÈŠH\È›İYN‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜH]\İ™HX\šÙY]][XÈŠBˆÛİ\˜ÙHHİ^
+\XÚ\[™Ù]
+˜\ÜÙ]ÜÛİ\˜ÙHŠKˆÜK˜\ÜÙ]ÜÛİ\˜ÙHŠBˆİ^
+\XÚ\[™Ù]
+™›Øİ\ÈŠKˆÜK™›Øİ\ÈŠBˆÛÛ^ÜİYÙK]Z[ÜİYÙHH
 
-_STAGES = ("context_a", "detail_a", "context_b", "detail_b", "synthesis")
-_MOVEMENTS = {"source_linked_zoom", "mask_reveal", "matched_push", "slide_align"}
-_EASINGS = {"ease_in_out"}
-_CONTEXT_BACKGROUNDS = {"blurred_source", "removed_or_replaced"}
-_MAX_PIXEL_DIMENSION = 1_000_000
+˜ÛÛ^ØH‹™]Z[ØHŠHYˆ\XÚ\[Ú[™^OHBˆ[ÙH
+˜ÛÛ^Øˆ‹™]Z[ØˆŠJBˆ›ÜˆİYÙH[ˆ
+ÛÛ^ÜİYÙK]Z[ÜİYÙJN‚ˆİYÙWÚYHİYÙWØ™X]ÖÜİYÙWBˆİYÙWØ™X]HWÚYÜİYÙWÚYVÌWBˆX]Ú\ÈHØ\ÜÙ]›Üˆ\ÜÙ][ˆİYÙWØ™X]™Ù]
+˜\ÜÙ]È‹×JBˆYˆ\ÜÙ]™Ù]
+šÚ[™ŠHOHœ™X[İZHˆ[™\ÜÙ]™Ù]
+œÛİ\˜ÙHŠHOHÛİ\˜ÙBˆ[™\ÜÙ]™Ù]
+˜]][XÈŠH\ÈYWBˆYˆ›İX]Ú\Î‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜK˜\ÜÙ]ÜÛİ\˜ÙH]\İX]Ú[ˆ]][XÈ™X[İZH\ÜÙ][ˆÜİYÙ_HŠB‚ˆ™YÚ[ÛœÈH\XÚ\[™Ù]
+œÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈŠBˆYˆ›İ\Ú[œİ[˜ÙJ™YÚ[ÛœË\İ
+HÜˆ›İ™YÚ[ÛœÎ‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜKœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈ]\İ™HH›Û‹Y[\H\œ˜^HŠBˆ™YÚ[Û—ÚYÈHÙ]
 
-
-def _object(value, label):
-    if not isinstance(value, dict):
-        raise ValidationError(f"{label} must be an object")
-    return value
-
-
-def _text(value, label):
-    if not isinstance(value, str) or not value.strip():
-        raise ValidationError(f"{label} must be a non-empty string")
-    return value
-
-
-def _number(value, label, *, minimum=0, maximum=None):
-    if (isinstance(value, bool) or not isinstance(value, (int, float))
-            or (isinstance(value, float) and not math.isfinite(value)) or value < minimum):
-        raise ValidationError(f"{label} must be a finite number >= {minimum}")
-    if maximum is not None and value > maximum:
-        raise ValidationError(f"{label} must be <= {maximum}")
-    return value
-
-
-def _pixel_number(value, label, *, minimum=0, maximum=None):
-    value = _number(value, label, minimum=minimum, maximum=maximum)
-    if not isinstance(value, int) and not value.is_integer():
-        raise ValidationError(f"{label} must align to an integer pixel")
-    return value
-
-
-def validate_visual_sequences(payload):
-    """Validate a visual-sequence declaration without asserting semantic quality.
-
-    The harness authors the sequence after interpreting the narration and reviewing
-    assets. This function only verifies declared structure, evidence links and geometry.
-    """
-    sequences = payload.get("visual_sequences", [])
-    if not isinstance(sequences, list):
-        raise ValidationError("visual_sequences must be an array")
-
-    beats = payload.get("beats", [])
-    by_id = {beat["id"]: (index, beat) for index, beat in enumerate(beats)}
-    seen_ids = set()
-    reports = []
-    for sequence_index, sequence in enumerate(sequences, 1):
-        prefix = f"visual_sequences[{sequence_index}]"
-        sequence = _object(sequence, prefix)
-        sequence_id = _text(sequence.get("id"), f"{prefix}.id")
-        if sequence_id in seen_ids:
-            raise ValidationError(f"duplicate visual sequence id: {sequence_id}")
-        seen_ids.add(sequence_id)
-        if sequence.get("pattern") != "contrast_reveal":
-            raise ValidationError(f"{prefix}.pattern must be contrast_reveal")
-        _text(sequence.get("trigger"), f"{prefix}.trigger")
-        _text(sequence.get("takeaway"), f"{prefix}.takeaway")
-
-        stage_beats = _object(sequence.get("stage_beats"), f"{prefix}.stage_beats")
-        if set(stage_beats) != set(_STAGES):
-            raise ValidationError(f"{prefix}.stage_beats must declare exactly {_STAGES}")
-        stage_ids = [_text(stage_beats[stage], f"{prefix}.stage_beats.{stage}") for stage in _STAGES]
-        unknown = [beat_id for beat_id in stage_ids if beat_id not in by_id]
-        if unknown:
-            raise ValidationError(f"{prefix} references unknown beat {unknown[0]}")
-        indices = [by_id[beat_id][0] for beat_id in stage_ids]
-        if indices != sorted(indices) or len(set(indices)) != len(_STAGES):
-            raise ValidationError(f"{prefix}.stage_beats must reference five distinct beats in teaching order")
-        for stage in _STAGES:
-            beat_id = _text(stage_beats[stage], f"{prefix}.stage_beats.{stage}")
-            _, beat = by_id[beat_id]
-            marker = _object(beat.get("visual_sequence"), f"beats[{beat_id}].visual_sequence")
-            if marker.get("id") != sequence_id or marker.get("stage") != stage:
-                raise ValidationError(f"beat {beat_id} is not marked as {sequence_id}/{stage}")
-            expected_participant = ("a" if stage.endswith("_a") else "b" if stage.endswith("_b") else None)
-            if expected_participant and marker.get("participant_id") != expected_participant:
-                raise ValidationError(f"beat {beat_id} must name participant {expected_participant}")
-            _number(beat.get("duration_seconds"), f"beat {beat_id}.duration_seconds", minimum=1.5, maximum=12)
-        participants = sequence.get("participants")
-        if not isinstance(participants, list) or len(participants) != 2:
-            raise ValidationError(f"{prefix}.participants must contain exactly two participants")
-        participant_ids = set()
-        for participant_index, participant in enumerate(participants, 1):
-            pfx = f"{prefix}.participants[{participant_index}]"
-            participant = _object(participant, pfx)
-            participant_id = _text(participant.get("id"), f"{pfx}.id")
-            if participant_id in participant_ids:
-                raise ValidationError(f"{prefix} participant ids must be distinct")
-            participant_ids.add(participant_id)
-            _text(participant.get("label"), f"{pfx}.label")
-            if participant.get("authentic") is not True:
-                raise ValidationError(f"{pfx} must be marked authentic")
-            source = _text(participant.get("asset_source"), f"{pfx}.asset_source")
-            _text(participant.get("focus"), f"{pfx}.focus")
-            context_stage, detail_stage = (("context_a", "detail_a") if participant_index == 1
-                                            else ("context_b", "detail_b"))
-            for stage in (context_stage, detail_stage):
-                stage_id = stage_beats[stage]
-                stage_beat = by_id[stage_id][1]
-                matches = [asset for asset in stage_beat.get("assets", [])
-                           if asset.get("kind") == "real_ui" and asset.get("source") == source
-                           and asset.get("authentic") is True]
-                if not matches:
-                    raise ValidationError(f"{pfx}.asset_source must match an authentic real_ui asset in {stage}")
-
-            regions = participant.get("source_pixel_regions")
-            if not isinstance(regions, list) or not regions:
-                raise ValidationError(f"{pfx}.source_pixel_regions must be a non-empty array")
-            region_ids = set()
-            for region_index, region in enumerate(regions, 1):
-                rfx = f"{pfx}.source_pixel_regions[{region_index}]"
-                region = _object(region, rfx)
-                region_id = _text(region.get("id"), f"{rfx}.id")
-                if region_id in region_ids:
-                    raise ValidationError(f"{pfx}.source_pixel_regions ids must be distinct")
-                region_ids.add(region_id)
-                _text(region.get("purpose"), f"{rfx}.purpose")
-                crop = _object(region.get("crop"), f"{rfx}.crop")
-                if crop.get("coordinate_space") != "source_pixels":
-                    raise ValidationError(f"{rfx}.crop.coordinate_space must be source_pixels")
-                x = _pixel_number(crop.get("x"), f"{rfx}.crop.x", maximum=_MAX_PIXEL_DIMENSION)
-                y = _pixel_number(crop.get("y"), f"{rfx}.crop.y", maximum=_MAX_PIXEL_DIMENSION)
-                width = _pixel_number(crop.get("width"), f"{rfx}.crop.width", minimum=1, maximum=_MAX_PIXEL_DIMENSION)
-                height = _pixel_number(crop.get("height"), f"{rfx}.crop.height", minimum=1, maximum=_MAX_PIXEL_DIMENSION)
-                source_width = _pixel_number(crop.get("source_width"), f"{rfx}.crop.source_width", minimum=1, maximum=_MAX_PIXEL_DIMENSION)
-                source_height = _pixel_number(crop.get("source_height"), f"{rfx}.crop.source_height", minimum=1, maximum=_MAX_PIXEL_DIMENSION)
-                display_width = _pixel_number(crop.get("display_width"), f"{rfx}.crop.display_width", minimum=1, maximum=_MAX_PIXEL_DIMENSION)
-                display_height = _pixel_number(crop.get("display_height"), f"{rfx}.crop.display_height", minimum=1, maximum=_MAX_PIXEL_DIMENSION)
-                if x + width > source_width or y + height > source_height:
-                    raise ValidationError(f"{rfx}.crop extends beyond its source image")
-                if width < display_width or height < display_height:
-                    raise ValidationError(f"{rfx}.crop would be upscaled at the planned display size")
-                if abs(width / height - display_width / display_height) > (width / height) * 0.01:
-                    raise ValidationError(f"{rfx}.crop display aspect ratio must stay within 1% of its source crop")
-
-        synthesis = by_id[stage_beats["synthesis"]][1]
-        for participant in participants:
-            if not any(asset.get("kind") == "real_ui" and asset.get("source") == participant["asset_source"]
-                       and asset.get("authentic") is True for asset in synthesis.get("assets", [])):
-                raise ValidationError(f"synthesis beat must retain both authentic participant screenshots")
-
-        motion = _object(sequence.get("motion"), f"{prefix}.motion")
-        movement = _text(motion.get("movement"), f"{prefix}.motion.movement")
-        if movement not in _MOVEMENTS:
-            raise ValidationError(f"{prefix}.motion.movement must be one of {sorted(_MOVEMENTS)}")
-        easing = _text(motion.get("easing"), f"{prefix}.motion.easing")
-        if easing not in _EASINGS:
-            raise ValidationError(f"{prefix}.motion.easing must be one of {sorted(_EASINGS)}")
-        pixel_alignment = _text(motion.get("pixel_alignment"), f"{prefix}.motion.pixel_alignment")
-        if pixel_alignment != "integer_pixel_grid":
-            raise ValidationError(f"{prefix}.motion.pixel_alignment must be integer_pixel_grid")
-        context_background = _text(motion.get("context_background"), f"{prefix}.motion.context_background")
-        if context_background not in _CONTEXT_BACKGROUNDS:
-            raise ValidationError(f"{prefix}.motion.context_background must be one of {sorted(_CONTEXT_BACKGROUNDS)}")
-        context_hold = _number(motion.get("context_hold_seconds"), f"{prefix}.motion.context_hold_seconds", minimum=2.5, maximum=4.5)
-        reframe = _number(motion.get("reframe_seconds"), f"{prefix}.motion.reframe_seconds", minimum=0.25, maximum=0.9)
-        context_blur = _number(motion.get("context_blur_px"), f"{prefix}.motion.context_blur_px", minimum=0, maximum=16)
-        if context_background == "blurred_source" and context_blur == 0:
-            raise ValidationError(f"{prefix}.motion.context_blur_px must be > 0 when context_background is blurred_source")
-        if context_background == "removed_or_replaced" and context_blur != 0:
-            raise ValidationError(f"{prefix}.motion.context_blur_px must be 0 when context_background is removed_or_replaced")
-        if "region_stagger_seconds" in motion:
-            _number(motion["region_stagger_seconds"], f"{prefix}.motion.region_stagger_seconds", minimum=0, maximum=0.8)
-        detail_hold = _number(motion.get("detail_hold_seconds"), f"{prefix}.motion.detail_hold_seconds", minimum=1.5, maximum=8)
-        synthesis_hold = _number(motion.get("synthesis_hold_seconds"), f"{prefix}.motion.synthesis_hold_seconds", minimum=2, maximum=8)
-        for stage in ("context_a", "context_b"):
-            if context_hold + reframe > by_id[stage_beats[stage]][1]["duration_seconds"]:
-                raise ValidationError(f"{prefix}.motion context hold and reframe exceed the {stage} beat duration")
-        if detail_hold > by_id[stage_beats["detail_a"]][1]["duration_seconds"] or detail_hold > by_id[stage_beats["detail_b"]][1]["duration_seconds"]:
-            raise ValidationError(f"{prefix}.motion.detail_hold_seconds exceeds a detail beat duration")
-        if synthesis_hold > synthesis["duration_seconds"]:
-            raise ValidationError(f"{prefix}.motion.synthesis_hold_seconds exceeds the synthesis beat duration")
-        uncertainty = sequence.get("uncertainty")
-        if uncertainty is not None:
-            uncertainty = _object(uncertainty, f"{prefix}.uncertainty")
-            for key in ("question", "evidence", "impact", "recommendation"):
-                _text(uncertainty.get(key), f"{prefix}.uncertainty.{key}")
-            decision_status = _text(uncertainty.get("decision_status", "pending"),
-                                    f"{prefix}.uncertainty.decision_status")
-            if decision_status not in {"pending", "resolved"}:
-                raise ValidationError(f"{prefix}.uncertainty.decision_status must be pending or resolved")
-        reports.append({"id": sequence_id, "pattern": "contrast_reveal", "stages": list(_STAGES),
-                        "beat_ids": [stage_beats[stage] for stage in _STAGES],
-                        "participant_labels": [participant["label"] for participant in participants],
-                        "region_ids": [[region["id"] for region in participant["source_pixel_regions"]]
-                                       for participant in participants],
-                        "easing": easing,
-                        "pixel_alignment": pixel_alignment,
-                        "context_background": context_background,
-                        "context_blur_px": context_blur,
-                        "uncertainty": uncertainty})
-    return reports
+Bˆ›Üˆ™YÚ[Û—Ú[™^™YÚ[Ûˆ[ˆ[[Y\˜]J™YÚ[ÛœËJN‚ˆ™HˆÜKœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÖŞÜ™YÚ[Û—Ú[™^WH‚ˆ™YÚ[ÛˆHÛØš™Xİ
+™YÚ[Û‹™
+Bˆ™YÚ[Û—ÚYHİ^
+™YÚ[Û‹™Ù]
+šYŠKˆÜ™KšYŠBˆYˆ™YÚ[Û—ÚY[ˆ™YÚ[Û—ÚYÎ‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜKœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈYÈ]\İ™H\İ[˜İŠBˆ™YÚ[Û—ÚYË˜Y
+™YÚ[Û—ÚY
+Bˆİ^
+™YÚ[Û‹™Ù]
+œ\œÜÙHŠKˆÜ™Kœ\œÜÙHŠBˆÜ›ÜHÛØš™Xİ
+™YÚ[Û‹™Ù]
+˜Ü›ÜŠKˆÜ™K˜Ü›ÜŠBˆYˆÜ›Ü™Ù]
+˜ÛÛÜ™[˜]WÜÜXÙHŠHOHœÛİ\˜ÙWÜ^[È‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™K˜Ü›Ü˜ÛÛÜ™[˜]WÜÜXÙH]\İ™HÛİ\˜ÙWÜ^[ÈŠBˆHÜ^[Û[X™\ŠÜ›Ü™Ù]
+ŠKˆÜ™K˜Ü›Ü‹X^[][OWÓPVÔVSÑSQS”ÒSÓŠBˆHHÜ^[Û[X™\ŠÜ›Ü™Ù]
+HŠKˆÜ™K˜Ü›ÜH‹X^[][OWÓPVÔVSÑSQS”ÒSÓŠBˆÚYHÜ^[Û[X™\ŠÜ›Ü™Ù]
+ÚYŠKˆÜ™K˜Ü›ÜÚY‹Z[š[][OLKX^[][OWÓPVÔVSÑSQS”ÒSÓŠBˆZYÚHÜ^[Û[X™\ŠÜ›Ü™Ù]
+šZYÚŠKˆÜ™K˜Ü›ÜšZYÚ‹Z[š[][OLKX^[][OWÓPVÔVSÑSQS”ÒSÓŠBˆÛİ\˜ÙWİÚYHÜ^[Û[X™\ŠÜ›Ü™Ù]
+œÛİ\˜ÙWİÚYŠKˆÜ™K˜Ü›ÜœÛİ\˜ÙWİÚY‹Z[š[][OLKX^[][OWÓPVÔVSÑSQS”ÒSÓŠBˆÛİ\˜ÙWÚZYÚHÜ^[Û[X™\ŠÜ›Ü™Ù]
+œÛİ\˜ÙWÚZYÚŠKˆÜ™K˜Ü›ÜœÛİ\˜ÙWÚZYÚ‹Z[š[][OLKX^[][OWÓPVÔVSÑSQS”ÒSÓŠBˆ\Ü^WİÚYHÜ^[Û[X™\ŠÜ›Ü™Ù]
+™\Ü^WİÚYŠKˆÜ™K˜Ü›Ü™\Ü^WİÚY‹Z[š[][OLKX^[][OWÓPVÔVSÑSQS”ÒSÓŠBˆ\Ü^WÚZYÚHÜ^[Û[X™\ŠÜ›Ü™Ù]
+™\Ü^WÚZYÚŠKˆÜ™K˜Ü›Ü™\Ü^WÚZYÚ‹Z[š[][OLKX^[][OWÓPVÔVSÑSQS”ÒSÓŠBˆYˆ
+ÈÚYˆÛİ\˜ÙWİÚYÜˆH
+ÈZYÚˆÛİ\˜ÙWÚZYÚ‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™K˜Ü›Ü^[™È™^[Û™]ÈÛİ\˜ÙH[XYÙHŠBˆYˆÚY\Ü^WİÚYÜˆZYÚ\Ü^WÚZYÚ‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™K˜Ü›ÜÛİ[™H\ØØ[Y]H[›™Y\Ü^HÚ^™HŠBˆYˆXœÊÚYÈZYÚH\Ü^WİÚYÈ\Ü^WÚZYÚ
+Hˆ
+ÚYÈZYÚ
+H
+ˆŒN‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™K˜Ü›Ü\Ü^H\ÜXİ˜][È]\İİ^HÚ][ˆIHÙˆ]ÈÛİ\˜ÙHÜ›ÜŠB‚ˆŞ[\Ú\ÈHWÚYÜİYÙWØ™X]ÖÈœŞ[\Ú\È—WVÌWBˆ›Üˆ\XÚ\[[ˆ\XÚ\[Î‚ˆYˆ›İ[J\ÜÙ]™Ù]
+šÚ[™ŠHOHœ™X[İZHˆ[™\ÜÙ]™Ù]
+œÛİ\˜ÙHŠHOH\XÚ\[È˜\ÜÙ]ÜÛİ\˜ÙH—Bˆ[™\ÜÙ]™Ù]
+˜]][XÈŠH\ÈYH›Üˆ\ÜÙ][ˆŞ[\Ú\Ë™Ù]
+˜\ÜÙ]È‹×JJN‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆœŞ[\Ú\È™X]]\İ™]Z[ˆ›İ]][XÈ\XÚ\[ØÜ™Y[œÚİÈŠB‚ˆ[İ[ÛˆHÛØš™Xİ
+Ù\]Y[˜ÙK™Ù]
+›[İ[ÛˆŠKˆÜ™Yš^K›[İ[ÛˆŠBˆ[İ™[Y[Hİ^
+[İ[Û‹™Ù]
+›[İ™[Y[ŠKˆÜ™Yš^K›[İ[Û‹›[İ™[Y[ŠBˆYˆ[İ™[Y[›İ[ˆÓSÕ‘SQS•Î‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[Û‹›[İ™[Y[]\İ™HÛ™HÙˆÜÛÜY
+ÓSÕ‘SQS•Ê_HŠBˆX\Ú[™ÈHİ^
+[İ[Û‹™Ù]
+™X\Ú[™ÈŠKˆÜ™Yš^K›[İ[Û‹™X\Ú[™ÈŠBˆYˆX\Ú[™È›İ[ˆÑPTÒS‘ÔÎ‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[Û‹™X\Ú[™È]\İ™HÛ™HÙˆÜÛÜY
+ÑPTÒS‘ÔÊ_HŠBˆ^[Ø[YÛ›Y[Hİ^
+[İ[Û‹™Ù]
+œ^[Ø[YÛ›Y[ŠKˆÜ™Yš^K›[İ[Û‹œ^[Ø[YÛ›Y[ŠBˆYˆ^[Ø[YÛ›Y[OHš[YÙ\—Ü^[ÙÜšY‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[Û‹œ^[Ø[YÛ›Y[]\İ™H[YÙ\—Ü^[ÙÜšYŠBˆÛÛ^Ø˜XÚÙÜ›İ[™Hİ^
+[İ[Û‹™Ù]
+˜ÛÛ^Ø˜XÚÙÜ›İ[™ŠKˆÜ™Yš^K›[İ[Û‹˜ÛÛ^Ø˜XÚÙÜ›İ[™ŠBˆYˆÛÛ^Ø˜XÚÙÜ›İ[™›İ[ˆĞÓÓ•VĞPÒÑÔ“ÕS‘Î‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[Û‹˜ÛÛ^Ø˜XÚÙÜ›İ[™]\İ™HÛ™HÙˆÜÛÜY
+ĞÓÓ•VĞPÒÑÔ“ÕS‘Ê_HŠBˆÛÛ^ÚÛHÛ[X™\Š[İ[Û‹™Ù]
+˜ÛÛ^ÚÛÜÙXÛÛ™ÈŠKˆÜ™Yš^K›[İ[Û‹˜ÛÛ^ÚÛÜÙXÛÛ™È‹Z[š[][OL‹KX^[][OMJBˆ™Yœ˜[YHHÛ[X™\Š[İ[Û‹™Ù]
+œ™Yœ˜[YWÜÙXÛÛ™ÈŠKˆÜ™Yš^K›[İ[Û‹œ™Yœ˜[YWÜÙXÛÛ™È‹Z[š[][OLX^[][OLKŒŠBˆÛÛ^Ø›\ˆHÛ[X™\Š[İ[Û‹™Ù]
+˜ÛÛ^Ø›\—ÜŠKˆÜ™Yš^K›[İ[Û‹˜ÛÛ^Ø›\—Ü‹Z[š[][OLX^[][OLMŠBˆYˆÛÛ^Ø˜XÚÙÜ›İ[™OH˜›\œ™YÜÛİ\˜ÙHˆ[™ÛÛ^Ø›\ˆOH‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[Û‹˜ÛÛ^Ø›\—Ü]\İ™HˆÚ[ˆÛÛ^Ø˜XÚÙÜ›İ[™\È›\œ™YÜÛİ\˜ÙHŠBˆYˆÛÛ^Ø˜XÚÙÜ›İ[™OHœ™[[İ™YÛÜ—Ü™\XÙYˆ[™ÛÛ^Ø›\ˆOH‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[Û‹˜ÛÛ^Ø›\—Ü]\İ™HÚ[ˆÛÛ^Ø˜XÚÙÜ›İ[™\È™[[İ™YÛÜ—Ü™\XÙYŠBˆYˆœ™YÚ[Û—ÜİYÙÙ\—ÜÙXÛÛ™Èˆ[ˆ[İ[Û‚ˆÛ[X™\Š[İ[Û–Èœ™YÚ[Û—ÜİYÙÙ\—ÜÙXÛÛ™È—KˆÜ™Yš^K›[İ[Û‹œ™YÚ[Û—ÜİYÙÙ\—ÜÙXÛÛ™È‹Z[š[][OLX^[][OL
+Bˆ]Z[ÚÛHÛ[X™\Š[İ[Û‹™Ù]
+™]Z[ÚÛÜÙXÛÛ™ÈŠKˆÜ™Yš^K›[İ[Û‹™]Z[ÚÛÜÙXÛÛ™È‹Z[š[][OMX^[][ON
+BˆŞ[\Ú\×ÚÛHÛ[X™\Š[İ[Û‹™Ù]
+œŞ[\Ú\×ÚÛÜÙXÛÛ™ÈŠKˆÜ™Yš^K›[İ[Û‹œŞ[\Ú\×ÚÛÜÙXÛÛ™È‹Z[š[][OL‹X^[][ON
+Bˆ›ÜˆİYÙH[ˆ
+˜ÛÛ^ØH‹˜ÛÛ^ØˆŠN‚ˆYˆÛÛ^ÚÛ
+È™Yœ˜[YHˆWÚYÜİYÙWØ™X]ÖÜİYÙWWVÌWVÈ™\˜][Û—ÜÙXÛÛ™È—N‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[ÛˆÛÛ^Û[™™Yœ˜[YH^ÙYYHÜİYÙ_H™X]\˜][ÛˆŠBˆYˆ]Z[ÚÛˆWÚYÜİYÙWØ™X]ÖÈ™]Z[ØH—WVÌWVÈ™\˜][Û—ÜÙXÛÛ™È—HÜˆ]Z[ÚÛˆWÚYÜİYÙWØ™X]ÖÈ™]Z[Øˆ—WVÌWVÈ™\˜][Û—ÜÙXÛÛ™È—N‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[Û‹™]Z[ÚÛÜÙXÛÛ™È^ÙYYÈH]Z[™X]\˜][ÛˆŠBˆYˆŞ[\Ú\×ÚÛˆŞ[\Ú\ÖÈ™\˜][Û—ÜÙXÛÛ™È—N‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K›[İ[Û‹œŞ[\Ú\×ÚÛÜÙXÛÛ™È^ÙYYÈHŞ[\Ú\È™X]\˜][ÛˆŠBˆ[˜Ù\Z[HHÙ\]Y[˜ÙK™Ù]
+[˜Ù\Z[HŠBˆYˆ[˜Ù\Z[H\È›İ›Û™N‚ˆ[˜Ù\Z[HHÛØš™Xİ
+[˜Ù\Z[KˆÜ™Yš^K[˜Ù\Z[HŠBˆ›ÜˆÙ^H[ˆ
+œ]Y\İ[Ûˆ‹™]šY[˜ÙH‹š[\Xİ‹œ™XÛÛ[Y[™][ÛˆŠN‚ˆİ^
+[˜Ù\Z[K™Ù]
+Ù^JKˆÜ™Yš^K[˜Ù\Z[KÚÙ^_HŠBˆXÚ\Ú[Û—Üİ]\ÈHİ^
+[˜Ù\Z[K™Ù]
+™XÚ\Ú[Û—Üİ]\È‹œ[™[™ÈŠKˆˆÜ™Yš^K[˜Ù\Z[K™XÚ\Ú[Û—Üİ]\ÈŠBˆYˆXÚ\Ú[Û—Üİ]\È›İ[ˆÈœ[™[™È‹œ™\ÛÛ™YŸN‚ˆ˜Z\ÙH˜[Y][Û‘\œ›ÜŠˆÜ™Yš^K[˜Ù\Z[K™XÚ\Ú[Û—Üİ]\È]\İ™H[™[™ÈÜˆ™\ÛÛ™YŠBˆ™\ÜË˜\[™
+ÈšYˆÙ\]Y[˜ÙWÚYœ]\›ˆˆ˜ÛÛ˜\İÜ™]™X[‹œİYÙ\Èˆ\İ
+ÔÕQÑTÊKˆ˜™X]ÚYÈˆÜİYÙWØ™X]ÖÜİYÙWH›ÜˆİYÙH[ˆÔÕQÑT×Kˆœ\XÚ\[ÛX™[ÈˆÜ\XÚ\[È›X™[—H›Üˆ\XÚ\[[ˆ\XÚ\[×Kˆœ™YÚ[Û—ÚYÈˆÖÜ™YÚ[Û–ÈšY—H›Üˆ™YÚ[Ûˆ[ˆ\XÚ\[ÈœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈ—WBˆ›Üˆ\XÚ\[[ˆ\XÚ\[×Kˆ™X\Ú[™ÈˆX\Ú[™Ëˆœ^[Ø[YÛ›Y[ˆ^[Ø[YÛ›Y[ˆ˜ÛÛ^Ø˜XÚÙÜ›İ[™ˆÛÛ^Ø˜XÚÙÜ›İ[™ˆ˜ÛÛ^Ø›\—ÜˆÛÛ^Ø›\‹ˆ[˜Ù\Z[Hˆ[˜Ù\Z[_JBˆ™]\›ˆ™\ÜÂ

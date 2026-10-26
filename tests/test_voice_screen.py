@@ -1,265 +1,202 @@
-"""Tests for the offline courseware narration/screen contract."""
+Û^š›bh¥êß¢¹­…â'ŠØš–,ŞçÚº[C®+Ş²Š^­«b¢z'¶…ŠW’ÊË^ššè¾'^­ö¢•çHˆˆ•\İÈ›ÜˆHÙ™›[™HÛİ\œÙ]Ø\™H˜\œ˜][Û‹ÜØÜ™Y[ˆÛÛ˜Xİˆˆˆ‚‚š[\ÜœÛÛ‚š[\ÜİXœ›ØÙ\ÜÂš[\ÜŞ\Âš[\Ü[\š[Bš[\Ü[š]\İ™œ›ÛH]Xˆ[\Ü]‚™œ›ÛH›ÚXÙWÙ\™XİÜ‹™\œ›ÜœÈ[\Ü[X[”™]šY]Ô™\]Z\™Y˜[Y][Û‘\œ›Ü‚™œ›ÛH›ÚXÙWÙ\™XİÜ‹›ÚXÙWÜØÜ™Y[ˆ[\Ü˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\‚‚”“ÓÕH]
+×Ùš[W×ÊKœ™\ÛÛ™J
+Kœ\™[ÖÌWB‚‚™Yˆ™X]
 
-import json
-import subprocess
-import sys
-import tempfile
-import unittest
-from pathlib import Path
+Š›İ™\œšY\ÊN‚ˆ™\İ[HÂˆšYˆŒH‹ˆ™\˜][Û—ÜÙXÛÛ™ÈˆˆœØÜ™Y[—İ^ˆ	İÚ\™WØ\HHœ™\ÜÛœÙ\È‰Ëˆ™›Øİ\ÈˆÚ\™WØ\H›İÈ‹ˆ˜[œÚ][ÛˆˆÈ™[Hˆ™˜YH‹™^]ˆ™˜YH‹›[İ[ÛˆˆœÛİÈ\ÚZ[ˆŸKˆ›ÚXÙWÛ[ÙHˆœİ[[X\H‹ˆ›˜\œ˜][Ûˆˆ¹ccú+«¹oázhnù.#¹§#yb¨yêëùao9k®{ï#9ab:acyïk¹a£y`f¹l#ù.îùb¨zj£:+àxà ˆ‹ˆœÜÚÙ[—Ü\œÜÙHˆ‘^Z[ˆÛÛ\]Xš[]H[™™\šYšXØ][Û‹›İHŞ[^ˆ‹ˆXÚšXØ[Ù\Ü^HˆYKˆœ™\]Z\™YÜØÜ™Y[—İ\›\ÈˆÉİÚ\™WØ\HHœ™\ÜÛœÙ\È‰×KˆœØÜ™Y[—ÛÛ›Wİ\›\ÈˆÈÚ\™WØ\HHœ™\ÜÛœÙ\×ˆ—Kˆ˜\ÜÙ]ÈˆŞÈšÚ[™ˆœ™X[İZH‹œÛİ\˜ÙHˆ›Ù™šXÚX[ÛÙ^ØÜ™Y[œÚİ‹˜]][XÈˆY_WKˆBˆ™\İ[\]Jİ™\œšY\ÊBˆ™]\›ˆ™\İ[‚‚™YˆÛÛ˜\İÛX\
 
-from voice_director.errors import HumanReviewRequired, ValidationError
-from voice_director.voice_screen import validate_voice_screen_map
+N‚ˆİYÙ\ÈHÈ˜ÛÛ^ØH‹™]Z[ØH‹˜ÛÛ^Øˆ‹™]Z[Øˆ‹œŞ[\Ú\È—BˆYˆ™YÚ[ÛŠ™YÚ[Û—ÚY\œÜÙKKÚYZYÚ\Ü^WİÚY\Ü^WÚZYÚ
+N‚ˆ™]\›ˆÈšYˆ™YÚ[Û—ÚYœ\œÜÙHˆ\œÜÙK˜Ü›ÜˆÂˆ˜ÛÛÜ™[˜]WÜÜXÙHˆœÛİ\˜ÙWÜ^[È‹ˆHˆKÚYˆÚYšZYÚˆZYÚˆœÛİ\˜ÙWİÚYˆNLŒœÛİ\˜ÙWÚZYÚˆLMˆ™\Ü^WİÚYˆ\Ü^WİÚY™\Ü^WÚZYÚˆ\Ü^WÚZYÚ_Bˆ\XÚ\[ÈHÂˆÈšYˆ˜ÛÙ^‹›X™[ˆÛÙ^‹˜\ÜÙ]ÜÛİ\˜ÙHˆ\Ù\ˆÛÙ^Ø\\™H‹˜]][XÈˆYKˆ™›Øİ\ÈˆÛÙ^›Ú™XİÙ[XİÜˆ‹œÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈˆÂˆ™YÚ[ÛŠšY[]H‹”›ÙXİY[]H‹ŒMLLM
+Kˆ™YÚ[ÛŠ\ÚÈ‹ÛÙH\ÚÈÛÛ^‹ÎLÌLMLÍÊW_KˆÈšYˆÛÜšÈ‹›X™[ˆÚ]ÔÛÜšÈ‹˜\ÜÙ]ÜÛİ\˜ÙHˆ\Ù\ˆÛÜšÈØ\\™H‹˜]][XÈˆYKˆ™›Øİ\ÈˆÚ]ÔÙ[XİÜˆ[™ÛÜšÈÛÛ\ÜÙ\ˆ‹œÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈˆÂˆ™YÚ[ÛŠšY[]H‹”›ÙXİY[]H‹ŒMLLM
+Kˆ™YÚ[ÛŠÛÜšÈ‹Ú]ÔÛÜšÈÛÛ\ÜÙ\ˆ‹LNLLMLÍÊW_KˆBˆ™X]ÈH×Bˆ›Üˆ[™^İYÙH[ˆ[[Y\˜]JİYÙ\ËJN‚ˆ\XÚ\[ÚYH˜ÛÙ^ˆYˆİYÙK™[™İÚ]
+—ØHŠH[ÙHÛÜšÈˆYˆİYÙK™[™İÚ]
+—ØˆŠH[ÙH›Û™Bˆ\ÜÙ]ÈH×BˆYˆİYÙHOHœŞ[\Ú\È‚ˆ\XÚ\[H\XÚ\[ÖÌYˆ\XÚ\[ÚYOH˜ÛÙ^ˆ[ÙHWBˆ\ÜÙ]ÈHŞÈšÚ[™ˆœ™X[İZH‹œÛİ\˜ÙHˆ\XÚ\[È˜\ÜÙ]ÜÛİ\˜ÙH—K˜]][XÈˆY_WBˆ[ÙN‚ˆ\ÜÙ]ÈHŞÈšÚ[™ˆœ™X[İZH‹œÛİ\˜ÙHˆ\XÚ\[È˜\ÜÙ]ÜÛİ\˜ÙH—K˜]][XÈˆY_Bˆ›Üˆ\XÚ\[[ˆ\XÚ\[×Bˆ™X]Ë˜\[™
+™X]
+YYˆÚ[™^Œ™H‹\˜][Û—ÜÙXÛÛ™ÏMXÚšXØ[Ù\Ü^OQ˜[ÙKˆ™\]Z\™YÜØÜ™Y[—İ\›\ÏV×KØÜ™Y[—ÛÛ›Wİ\›\ÏV×K\ÜÙ]ÏX\ÜÙ]Ëˆš\İX[ÜÙ\]Y[˜ÙO^ÈšYˆ˜Ú]ÜXÛÙ^‹œİYÙHˆİYÙKˆ
+ŠŠÈœ\XÚ\[ÚYˆ˜HˆYˆ\XÚ\[ÚYOH˜ÛÙ^ˆ[ÙH˜ˆŸBˆYˆ\XÚ\[ÚY[ÙHßJ_JJBˆ^[ØYHÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]Èˆ™X]Ëš\İX[ÜÙ\]Y[˜Ù\ÈˆŞÂˆšYˆ˜Ú]ÜXÛÙ^‹œ]\›ˆˆ˜ÛÛ˜\İÜ™]™X[‹ˆšYÙÙ\ˆˆ¹¥àyæoy¦#¹èk¹«å:/ ÈÛÙ^9.#ˆÚ]ÔÛÜšøà ˆ‹ZÙX]Ø^HˆÛÙ^: f¹á)ºhnyæë¹méy/g;ï&ù¨c:ghˆÚ]Ô9kîyn¥9ïdzhmyâbÛÜšøà ˆ‹ˆœİYÙWØ™X]ÈˆXİ
+š\
+İYÙ\ËÙˆÚ[™^Œ™Hˆ›Üˆ[™^[ˆ˜[™ÙJKŠWJJKˆœ\XÚ\[Èˆ\XÚ\[Ëˆ›[İ[ÛˆˆÈ›[İ™[Y[ˆœÛİ\˜ÙWÛ[šÙYŞ›ÛÛH‹™X\Ú[™Èˆ™X\ÙWÚ[—Ûİ]‹ˆœ^[Ø[YÛ›Y[ˆš[YÙ\—Ü^[ÙÜšY‹˜ÛÛ^Ø˜XÚÙÜ›İ[™ˆ˜›\œ™YÜÛİ\˜ÙH‹ˆ˜ÛÛ^ÚÛÜÙXÛÛ™Èˆ‹Ëœ™Yœ˜[YWÜÙXÛÛ™ÈˆK˜ÛÛ^Ø›\—Üˆˆ™]Z[ÚÛÜÙXÛÛ™ÈˆœŞ[\Ú\×ÚÛÜÙXÛÛ™ÈˆßKˆW_Bˆ™]\›ˆ^[ØY‚‚˜Û\ÜÈ›ÚXÙTØÜ™Y[ÛÛ˜Xİ\İÊ[š]\İ•\İØ\ÙJN‚ˆYˆ\İÜİ[[X\WÚÙY\×Ù^XİØÛÛ™šY×ÛÛ—ÜØÜ™Y[—Ø[™Ü\ÜÙ\ÊÙ[ŠN‚ˆ™\ÜH˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+ÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]ÈˆØ™X]
 
+W_JBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈœİ]\È—K”TÔÈŠBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈ˜™X]ØÛİ[—KJB‚ˆYˆ\İÜİ[[X\WØØ[››İÜ™XYØÛÛ™šY×Ø\ÜÚYÛ›Y[Ø[İY
+Ù[ŠN‚ˆ^[ØYHÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]ÈˆØ™X]
+˜\œ˜][ÛIİÚ\™WØ\HHœ™\ÜÛœÙ\È‰ÊW_HˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹˜\ÜÚYÛ›Y[Ş[^ŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İÜ™\]Z\™YÙ^XİØÛÛ™šY×ÙšY[×Û]\İØ\X\—ÛÛ—ÜØÜ™Y[ŠÙ[ŠN‚ˆ^[ØYHÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]ÈˆØ™X]
+ØÜ™Y[—İ^H›Û›HHXY[™ÈŠW_HˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹›Z\ÜÚ[™È™\]Z\™Y^Xİ^ŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İÜØÜ™Y[—ÛÛ›Wİ\›\×ØØ[››İØ™WÜ™\X]YÚ[—Üİ[[X\JÙ[ŠN‚ˆ^[ØYHÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]ÈˆØ™X]
+˜\œ˜][ÛH¹ab:+¯¹ïkˆÚ\™WØ\HHœ™\ÜÛœÙ\×ˆ9a£y­bú+åxà ˆŠW_HˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹œØÜ™Y[‹[Û›H\›HŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İÛ]™WØÜ™Y[X[×Ø\™WÜ™Z™XİY
+Ù[ŠN‚ˆ^[ØYHÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]ÈˆØ™X]
+ØÜ™Y[—İ^IİÚ\™WØ\HHœ™\ÜÛœÙ\È—“ÔSRWĞTWÒÑVO\ÚË\›Ú‹XX˜ÙY™ÚZšÛ[›ÜLŒÍ	ÊW_HˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹˜Ü™Y[X[ŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İÜ[™[™×İš\İX[İ[˜Ù\Z[WÜİ\™˜XÙ\×Ú[X[—Ü™]šY]×ÜXÚÙ]
+Ù[ŠN‚ˆ[˜Ù\Z[HHÈœ]Y\İ[Ûˆˆ’\È\ÈØÜ™Y[œÚİ\ÚİÜÜˆ[Øš[OÈ‹™]šY[˜ÙHˆ•HÜ›ÜÛZ]ÈHÚ[™İÈœ˜[YKˆ‹ˆš[\Xİˆ“X\›™\œÈX^HZ\İZÙHH[\™˜XÙH\Kˆ‹œ™XÛÛ[Y[™][Ûˆˆ“X™[\È[Øš[HÜˆ™\XÙH]ˆ‹ˆ™XÚ\Ú[Û—Üİ]\Èˆœ[™[™ÈŸBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ê[X[”™]šY]Ô™\]Z\™Y
+H\È˜Z\ÙY‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+ÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]ÈˆØ™X]
+[˜Ù\Z[O][˜Ù\Z[JW_JBˆÙ[‹˜\ÜÙ\\]X[
+˜Z\ÙY™^Ù\[Û‹œ™\ÜÈœİ]\È—KUĞRUS‘×ÒSPSˆŠBˆÙ[‹˜\ÜÙ\\]X[
+˜Z\ÙY™^Ù\[Û‹œ™\ÜÈœ[™[™×İ[˜Ù\Z[Y\È—VÌVÈœ]Y\İ[Ûˆ—K[˜Ù\Z[VÈœ]Y\İ[Ûˆ—JB‚ˆYˆ\İÛÛ™×ÚÛÜ™\]Z\™\×Ü™X\ÛÛŠÙ[ŠN‚ˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹™\˜][Û—Ü™X\ÛÛˆŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+ÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]ÈˆØ™X]
+\˜][Û—ÜÙXÛÛ™ÏLLÊW_JB‚ˆYˆ\İØÛÛ˜\İÜ™]™X[ØÚXÚÜ×ÜİYÙ\×ÜÛİ\˜Ù\×Ø[™Ü™\Ü×ÜÙ\]Y[˜ÙJÙ[ŠN‚ˆ™\ÜH˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+ÛÛ˜\İÛX\
 
-ROOT = Path(__file__).resolve().parents[1]
+JBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈœİ]\È—K”TÔÈŠBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ˜™X]ÚYÈ—KÈŒH‹Œˆ‹ŒÈ‹Œ‹ŒH—JBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœ™YÚ[Û—ÚYÈ—KÖÈšY[]H‹\ÚÈ—KÈšY[]H‹ÛÜšÈ—WJBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœ^[Ø[YÛ›Y[—Kš[YÙ\—Ü^[ÙÜšYŠBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ˜ÛÛ^Ø˜XÚÙÜ›İ[™—K˜›\œ™YÜÛİ\˜ÙHŠBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ˜ÛÛ^Ø›\—Ü—K
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™\]Z\™\×ØWÜ™XYX›WÙ[ØÛÛ^ÚÛ
+Ù[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈ˜ÛÛ^ÚÛÜÙXÛÛ™È—HH‹BˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹˜ÛÛ^ÚÛÜÙXÛÛ™ÈŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ù[™›Ü˜Ù\×Ø\›İ™YØÜ›Üİ˜]™[İÚ[™İÊÙ[ŠN‚ˆ›Üˆ[˜[Y[ˆ
+ÎKKŒŒJN‚ˆÚ]Ù[‹œİX•\İ
+[˜[YZ[˜[Y
+N‚ˆ^[ØYHÛÛ˜\İÛX\
 
-def beat(**overrides):
-    result = {
-        "id": "B01",
-        "duration_seconds": 8,
-        "screen_text": 'wire_api = "responses"',
-        "focus": "wire_api row",
-        "transition": {"entry": "fade", "exit": "fade", "motion": "slow push-in"},
-        "voice_mode": "summary",
-        "narration": "åè®®å¿…é¡»ä¸æœåŠ¡ç«¯å…¼å®¹ï¼Œå…ˆé…ç½®å†åšå°ä»»åŠ¡éªŒè¯ã€‚",
-        "spoken_purpose": "Explain compatibility and verification, not the syntax.",
-        "technical_display": True,
-        "required_screen_terms": ['wire_api = "responses"'],
-        "screen_only_terms": ["wire_api = \"responses\""],
-        "assets": [{"kind": "real_ui", "source": "official Codex screenshot", "authentic": True}],
-    }
-    result.update(overrides)
-    return result
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈœ™Yœ˜[YWÜÙXÛÛ™È—HH[˜[YˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹œ™Yœ˜[YWÜÙXÛÛ™ÈŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™\]Z\™\×Ù›İ\—ÜÙXÛÛ™×ÛÙ—ØÛX\—Ù]Z[
+Ù[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈ™]Z[ÚÛÜÙXÛÛ™È—HHËNBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹™]Z[ÚÛÜÙXÛÛ™ÈŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™Z™Xİ×Ü™[Ü™\™YØ™X]ÊÙ[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
-def contrast_map():
-    stages = ["context_a", "detail_a", "context_b", "detail_b", "synthesis"]
-    def region(region_id, purpose, x, y, width, height, display_width, display_height):
-        return {"id": region_id, "purpose": purpose, "crop": {
-            "coordinate_space": "source_pixels", "x": x, "y": y, "width": width, "height": height,
-            "source_width": 1920, "source_height": 1140,
-            "display_width": display_width, "display_height": display_height}}
-    participants = [
-        {"id": "codex", "label": "Codex", "asset_source": "user Codex capture", "authentic": True,
-         "focus": "Codex project selector", "source_pixel_regions": [
-             region("identity", "Product identity", 64, 48, 260, 150, 250, 144),
-             region("task", "Code task context", 390, 70, 900, 140, 880, 137)]},
-        {"id": "work", "label": "ChatGPT Work", "asset_source": "user Work capture", "authentic": True,
-         "focus": "ChatGPT selector and Work composer", "source_pixel_regions": [
-             region("identity", "Product identity", 64, 48, 260, 150, 250, 144),
-             region("work", "ChatGPT Work composer", 490, 990, 900, 140, 880, 137)]},
-    ]
-    beats = []
-    for index, stage in enumerate(stages, 1):
-        participant_id = "codex" if stage.endswith("_a") else "work" if stage.endswith("_b") else None
-        assets = []
-        if stage != "synthesis":
-            participant = participants[0 if participant_id == "codex" else 1]
-            assets = [{"kind": "real_ui", "source": participant["asset_source"], "authentic": True}]
-        else:
-            assets = [{"kind": "real_ui", "source": participant["asset_source"], "authentic": True}
-                      for participant in participants]
-        beats.append(beat(id=f"B{index:02d}", duration_seconds=4, technical_display=False,
-                          required_screen_terms=[], screen_only_terms=[], assets=assets,
-                          visual_sequence={"id": "chatgpt-codex", "stage": stage,
-                                           **({"participant_id": "a" if participant_id == "codex" else "b"}
-                                              if participant_id else {})}))
-    payload = {"schema_version": 1, "beats": beats, "visual_sequences": [{
-        "id": "chatgpt-codex", "pattern": "contrast_reveal",
-        "trigger": "æ—ç™½æ˜ç¡®æ¯”è¾ƒ Codex ä¸ ChatGPT Workã€‚", "takeaway": "Codex èšç„¦é¡¹ç›®å·¥ä½œï¼›æ¡Œé¢ ChatGPT å¯¹åº”ç½‘é¡µç‰ˆ Workã€‚",
-        "stage_beats": dict(zip(stages, [f"B{index:02d}" for index in range(1, 6)])),
-        "participants": participants,
-        "motion": {"movement": "source_linked_zoom", "easing": "ease_in_out",
-                   "pixel_alignment": "integer_pixel_grid", "context_background": "blurred_source",
-                   "context_hold_seconds": 2.7, "reframe_seconds": 0.6, "context_blur_px": 8,
-                   "detail_hold_seconds": 2.5, "synthesis_hold_seconds": 3},
-    }]}
-    return payload
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœİYÙWØ™X]È—VÈ™]Z[ØH—HHŒ‚ˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹XXÚ[™ÈÜ™\ˆŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™\]Z\™\×Ø]][X×ÜÛİ\˜ÙWÚ[—ØÛÛ^Ø[™Ù]Z[
+Ù[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
+Bˆ^[ØYÈ˜™X]È—VÌWVÈ˜\ÜÙ]È—VÌVÈ˜]][XÈ—HH˜[ÙBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹œ™X[İZH\ÜÙ]È]\İ™H^XÚ]HX\šÙY]][XÈŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™Z™Xİ×Ûİ]ÛÙ—Ø›İ[™×Ø[™İ\ØØ[YØÜ›ÜÊÙ[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
-class VoiceScreenContractTests(unittest.TestCase):
-    def test_summary_keeps_exact_config_on_screen_and_passes(self):
-        report = validate_voice_screen_map({"schema_version": 1, "beats": [beat()]})
-        self.assertEqual(report["status"], "PASS")
-        self.assertEqual(report["beat_count"], 1)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœ\XÚ\[È—VÌVÈœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈ—VÌVÈ˜Ü›Ü—VÈ—HHMÌˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹™^[™È™^[Û™ŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+Bˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_summary_cannot_read_config_assignment_aloud(self):
-        payload = {"schema_version": 1, "beats": [beat(narration='wire_api = "responses"')]} 
-        with self.assertRaisesRegex(ValidationError, "assignment syntax"):
-            validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœ\XÚ\[È—VÌVÈœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈ—VÌVÈ˜Ü›Ü—VÈ™\Ü^WİÚY—HHÌˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹Ûİ[™H\ØØ[YŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™Z™Xİ×Û›Û—Ùš[š]WÙÙ[ÛY]JÙ[ŠN‚ˆ›Üˆ[˜[Y[ˆ
+›Ø]
+›˜[ˆŠK›Ø]
+š[™ˆŠK›Ø]
+‹Z[™ˆŠJN‚ˆÚ]Ù[‹œİX•\İ
+[˜[YZ[˜[Y
+N‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_required_exact_config_fields_must_appear_on_screen(self):
-        payload = {"schema_version": 1, "beats": [beat(screen_text="only a heading")]} 
-        with self.assertRaisesRegex(ValidationError, "missing required exact text"):
-            validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœ\XÚ\[È—VÌVÈœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈ—VÌVÈ˜Ü›Ü—VÈ—HH[˜[YˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹™š[š]H[X™\ˆŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™Z™Xİ×Ù^™[Y[WÛ\™ÙWÚ[YÙ\—ØÛÛÜ™[˜]\×ØÛX[›JÙ[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_screen_only_terms_cannot_be_repeated_in_summary(self):
-        payload = {"schema_version": 1, "beats": [beat(narration="å…ˆè®¾ç½® wire_api = \"responses\" å†æµ‹è¯•ã€‚")]} 
-        with self.assertRaisesRegex(ValidationError, "screen-only term"):
-            validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœ\XÚ\[È—VÌVÈœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈ—VÌVÈ˜Ü›Ü—VÈ—HHL
+ŠˆLˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹HLŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+Bˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_live_credentials_are_rejected(self):
-        payload = {"schema_version": 1, "beats": [beat(screen_text='wire_api = "responses"\nOPENAI_API_KEY=sk-proj-abcdefghijklmnop1234')]} 
-        with self.assertRaisesRegex(ValidationError, "credential"):
-            validate_voice_screen_map(payload)
+BˆÜ›ÜH^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœ\XÚ\[È—VÌVÈœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈ—VÌVÈ˜Ü›Ü—BˆÜ›Ü\]JÈÚYˆL
+ŠˆLšZYÚˆKœÛİ\˜ÙWİÚYˆˆ
+ˆL
+ŠˆLˆœÛİ\˜ÙWÚZYÚˆ‹™\Ü^WİÚYˆK™\Ü^WÚZYÚˆ_JBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹HLŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[ÚÛ×Ùš]Ú[œÚYWİZ\—Ø™X]ÊÙ[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_pending_visual_uncertainty_surfaces_human_review_packet(self):
-        uncertainty = {"question": "Is this screenshot desktop or mobile?", "evidence": "The crop omits the window frame.",
-                       "impact": "Learners may mistake the interface type.", "recommendation": "Label as mobile or replace it.",
-                       "decision_status": "pending"}
-        with self.assertRaises(HumanReviewRequired) as raised:
-            validate_voice_screen_map({"schema_version": 1, "beats": [beat(uncertainty=uncertainty)]})
-        self.assertEqual(raised.exception.report["status"], "AWAITING_HUMAN")
-        self.assertEqual(raised.exception.report["pending_uncertainties"][0]["question"], uncertainty["question"])
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈœŞ[\Ú\×ÚÛÜÙXÛÛ™È—HHˆ^[ØYÈ˜™X]È—VÍVÈ™\˜][Û—ÜÙXÛÛ™È—HHËBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹™^ÙYYÈHŞ[\Ú\È™X]\˜][ÛˆŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™Z™Xİ×İ[š\ÚX›WÙ[[Wİ˜[Y\×ØÛX[›JÙ[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_long_hold_requires_reason(self):
-        with self.assertRaisesRegex(ValidationError, "duration_reason"):
-            validate_voice_screen_map({"schema_version": 1, "beats": [beat(duration_seconds=13)]})
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈ›[İ™[Y[—HH×BˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹›[İ[Û‹›[İ™[Y[]\İ™HH›Û‹Y[\Hİš[™ÈŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+Bˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_checks_stages_sources_and_reports_sequence(self):
-        report = validate_voice_screen_map(contrast_map())
-        self.assertEqual(report["status"], "PASS")
-        self.assertEqual(report["visual_sequences"][0]["beat_ids"], ["B01", "B02", "B03", "B04", "B05"])
-        self.assertEqual(report["visual_sequences"][0]["region_ids"], [["identity", "task"], ["identity", "work"]])
-        self.assertEqual(report["visual_sequences"][0]["pixel_alignment"], "integer_pixel_grid")
-        self.assertEqual(report["visual_sequences"][0]["context_background"], "blurred_source")
-        self.assertEqual(report["visual_sequences"][0]["context_blur_px"], 8)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ[˜Ù\Z[H—HHÂˆœ]Y\İ[Ûˆˆ”]Y\İ[ÛÈ‹™]šY[˜ÙHˆ‘]šY[˜ÙKˆ‹š[\Xİˆ’[\Xİˆ‹ˆœ™XÛÛ[Y[™][Ûˆˆ”™XÛÛ[Y[™][Û‹ˆ‹™XÚ\Ú[Û—Üİ]\Èˆ×_BˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹™XÚ\Ú[Û—Üİ]\È]\İ™HH›Û‹Y[\Hİš[™ÈŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[ØÛÛ^Ø›\—Ú\×Ø›İ[™Y
+Ù[ŠN‚ˆ›Üˆ[˜[Y[ˆ
+LŒKM‹ŒJN‚ˆÚ]Ù[‹œİX•\İ
+[˜[YZ[˜[Y
+N‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_requires_a_readable_full_context_hold(self):
-        payload = contrast_map()
-        payload["visual_sequences"][0]["motion"]["context_hold_seconds"] = 2.49
-        with self.assertRaisesRegex(ValidationError, "context_hold_seconds"):
-            validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈ˜ÛÛ^Ø›\—Ü—HH[˜[YˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹˜ÛÛ^Ø›\—ÜŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™\]Z\™\×Ù^XÚ]Ø˜XÚÙÜ›İ[™İ™X]Y[Ø[™Ø›\ŠÙ[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_rejects_reordered_beats(self):
-        payload = contrast_map()
-        payload["visual_sequences"][0]["stage_beats"]["detail_a"] = "B04"
-        with self.assertRaisesRegex(ValidationError, "teaching order"):
-            validate_voice_screen_map(payload)
+Bˆ[^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈ˜ÛÛ^Ø›\—Ü—BˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹˜ÛÛ^Ø›\—ÜŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+Bˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_requires_authentic_source_in_context_and_detail(self):
-        payload = contrast_map()
-        payload["beats"][1]["assets"][0]["authentic"] = False
-        with self.assertRaisesRegex(ValidationError, "real_ui assets must be explicitly marked authentic"):
-            validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—K\]JÈ˜ÛÛ^Ø˜XÚÙÜ›İ[™ˆ˜›\œ™YÜÛİ\˜ÙH‹˜ÛÛ^Ø›\—ÜˆJBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹›]\İ™HˆŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+Bˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_rejects_out_of_bounds_and_upscaled_crops(self):
-        payload = contrast_map()
-        payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]["x"] = 1700
-        with self.assertRaisesRegex(ValidationError, "extends beyond"):
-            validate_voice_screen_map(payload)
-        payload = contrast_map()
-        payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]["display_width"] = 300
-        with self.assertRaisesRegex(ValidationError, "would be upscaled"):
-            validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—K\]JÈ˜ÛÛ^Ø˜XÚÙÜ›İ[™ˆœ™[[İ™YÛÜ—Ü™\XÙY‹˜ÛÛ^Ø›\—ÜˆJBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹›]\İ™HŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™\]Z\™\×ÜÛ[ÛİÜ^[Ø[YÛ™YÛ[İ[ÛŠÙ[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_rejects_non_finite_geometry(self):
-        for invalid in (float("nan"), float("inf"), float("-inf")):
-            with self.subTest(invalid=invalid):
-                payload = contrast_map()
-                payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]["x"] = invalid
-                with self.assertRaisesRegex(ValidationError, "finite number"):
-                    validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈ™X\Ú[™È—HH›[™X\ˆ‚ˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹›[İ[Û‹™X\Ú[™ÈŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+Bˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_rejects_extremely_large_integer_coordinates_cleanly(self):
-        payload = contrast_map()
-        payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]["x"] = 10 ** 10000
-        with self.assertRaisesRegex(ValidationError, "<= 1000000"):
-            validate_voice_screen_map(payload)
-        payload = contrast_map()
-        crop = payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"]
-        crop.update({"width": 10 ** 1000, "height": 1, "source_width": 2 * 10 ** 1000,
-                     "source_height": 2, "display_width": 1, "display_height": 1})
-        with self.assertRaisesRegex(ValidationError, "<= 1000000"):
-            validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ›[İ[Ûˆ—VÈœ^[Ø[YÛ›Y[—HHœİXœ^[‚ˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹š[YÙ\—Ü^[ÙÜšYŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü™Z™Xİ×Ùœ˜Xİ[Û˜[ØÜ›ÜÙÙ[ÛY]JÙ[ŠN‚ˆ›ÜˆšY[[ˆ
+‹H‹ÚY‹šZYÚ‹™\Ü^WİÚY‹™\Ü^WÚZYÚŠN‚ˆÚ]Ù[‹œİX•\İ
+šY[YšY[
+N‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_holds_fit_inside_their_beats(self):
-        payload = contrast_map()
-        payload["visual_sequences"][0]["motion"]["synthesis_hold_seconds"] = 4
-        payload["beats"][4]["duration_seconds"] = 3.5
-        with self.assertRaisesRegex(ValidationError, "exceeds the synthesis beat duration"):
-            validate_voice_screen_map(payload)
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈœ\XÚ\[È—VÌVÈœÛİ\˜ÙWÜ^[Ü™YÚ[ÛœÈ—VÌVÈ˜Ü›Ü—VÙšY[H
+ÏHBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ô™YÙ^
+˜[Y][Û‘\œ›Ü‹š[YÙ\ˆ^[ŠN‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+B‚ˆYˆ\İØÛÛ˜\İÜ™]™X[Ü[™[™×İ[˜Ù\Z[WÜİ\™˜XÙ\×Ú[—Ú[X[—ÜXÚÙ]
+Ù[ŠN‚ˆ^[ØYHÛÛ˜\İÛX\
 
-    def test_contrast_reveal_rejects_unhashable_enum_values_cleanly(self):
-        payload = contrast_map()
-        payload["visual_sequences"][0]["motion"]["movement"] = []
-        with self.assertRaisesRegex(ValidationError, "motion.movement must be a non-empty string"):
-            validate_voice_screen_map(payload)
-        payload = contrast_map()
-        payload["visual_sequences"][0]["uncertainty"] = {
-            "question": "Question?", "evidence": "Evidence.", "impact": "Impact.",
-            "recommendation": "Recommendation.", "decision_status": []}
-        with self.assertRaisesRegex(ValidationError, "decision_status must be a non-empty string"):
-            validate_voice_screen_map(payload)
-
-    def test_contrast_reveal_context_blur_is_bounded(self):
-        for invalid in (-0.1, 16.1):
-            with self.subTest(invalid=invalid):
-                payload = contrast_map()
-                payload["visual_sequences"][0]["motion"]["context_blur_px"] = invalid
-                with self.assertRaisesRegex(ValidationError, "context_blur_px"):
-                    validate_voice_screen_map(payload)
-
-    def test_contrast_reveal_requires_explicit_background_treatment_and_blur(self):
-        payload = contrast_map()
-        del payload["visual_sequences"][0]["motion"]["context_blur_px"]
-        with self.assertRaisesRegex(ValidationError, "context_blur_px"):
-            validate_voice_screen_map(payload)
-        payload = contrast_map()
-        payload["visual_sequences"][0]["motion"].update({"context_background": "blurred_source", "context_blur_px": 0})
-        with self.assertRaisesRegex(ValidationError, "must be > 0"):
-            validate_voice_screen_map(payload)
-        payload = contrast_map()
-        payload["visual_sequences"][0]["motion"].update({"context_background": "removed_or_replaced", "context_blur_px": 8})
-        with self.assertRaisesRegex(ValidationError, "must be 0"):
-            validate_voice_screen_map(payload)
-
-    def test_contrast_reveal_requires_smooth_pixel_aligned_motion(self):
-        payload = contrast_map()
-        payload["visual_sequences"][0]["motion"]["easing"] = "linear"
-        with self.assertRaisesRegex(ValidationError, "motion.easing"):
-            validate_voice_screen_map(payload)
-        payload = contrast_map()
-        payload["visual_sequences"][0]["motion"]["pixel_alignment"] = "subpixel"
-        with self.assertRaisesRegex(ValidationError, "integer_pixel_grid"):
-            validate_voice_screen_map(payload)
-
-    def test_contrast_reveal_rejects_fractional_crop_geometry(self):
-        for field in ("x", "y", "width", "height", "display_width", "display_height"):
-            with self.subTest(field=field):
-                payload = contrast_map()
-                payload["visual_sequences"][0]["participants"][0]["source_pixel_regions"][0]["crop"][field] += 0.5
-                with self.assertRaisesRegex(ValidationError, "integer pixel"):
-                    validate_voice_screen_map(payload)
-
-    def test_contrast_reveal_pending_uncertainty_surfaces_in_human_packet(self):
-        payload = contrast_map()
-        payload["visual_sequences"][0]["uncertainty"] = {
-            "question": "Does the crop show the same ChatGPT Work surface?",
-            "evidence": "The selector is visible but the web mapping is not shown in this image.",
-            "impact": "Learners could confuse brand identity with interface type.",
-            "recommendation": "Add the Work composer label or ask the user for a clearer capture.",
-            "decision_status": "pending"}
-        with self.assertRaises(HumanReviewRequired) as raised:
-            validate_voice_screen_map(payload)
-        self.assertEqual(raised.exception.report["status"], "AWAITING_HUMAN")
-        self.assertEqual(raised.exception.report["pending_uncertainties"][0]["sequence_id"], "chatgpt-codex")
-
-    def test_cli_exposes_uncertainty_packet_with_awaiting_exit_code(self):
-        payload = {"schema_version": 1, "beats": [beat(uncertainty={
-            "question": "Use this visual?", "evidence": "Source attribution is partial.", "impact": "Could mislead a learner.",
-            "recommendation": "Confirm it or replace the asset.", "decision_status": "pending"})]}
-        with tempfile.TemporaryDirectory() as temp_dir:
-            path = Path(temp_dir) / "voice-screen-map.json"
-            path.write_text(json.dumps(payload), encoding="utf-8")
-            result = subprocess.run([sys.executable, "-m", "voice_director", "validate-voice-screen", "--map", str(path)],
-                                    cwd=ROOT, capture_output=True, text=True, check=False)
-        self.assertEqual(result.returncode, 3)
-        report = json.loads(result.stdout)
-        self.assertEqual(report["status"], "AWAITING_HUMAN")
-        self.assertEqual(report["pending_uncertainties"][0]["question"], "Use this visual?")
-
-
-if __name__ == "__main__":
-    unittest.main()
+Bˆ^[ØYÈš\İX[ÜÙ\]Y[˜Ù\È—VÌVÈ[˜Ù\Z[H—HHÂˆœ]Y\İ[Ûˆˆ‘Ù\ÈHÜ›ÜÚİÈHØ[YHÚ]ÔÛÜšÈİ\™˜XÙOÈ‹ˆ™]šY[˜ÙHˆ•HÙ[XİÜˆ\Èš\ÚX›H]HÙXˆX\[™È\È›İÚİÛˆ[ˆ\È[XYÙKˆ‹ˆš[\Xİˆ“X\›™\œÈÛİ[ÛÛ™\ÙHœ˜[™Y[]HÚ][\™˜XÙH\Kˆ‹ˆœ™XÛÛ[Y[™][ÛˆˆYHÛÜšÈÛÛ\ÜÙ\ˆX™[Üˆ\ÚÈH\Ù\ˆ›ÜˆHÛX\™\ˆØ\\™Kˆ‹ˆ™XÚ\Ú[Û—Üİ]\Èˆœ[™[™ÈŸBˆÚ]Ù[‹˜\ÜÙ\˜Z\Ù\Ê[X[”™]šY]Ô™\]Z\™Y
+H\È˜Z\ÙY‚ˆ˜[Y]Wİ›ÚXÙWÜØÜ™Y[—ÛX\
+^[ØY
+BˆÙ[‹˜\ÜÙ\\]X[
+˜Z\ÙY™^Ù\[Û‹œ™\ÜÈœİ]\È—KUĞRUS‘×ÒSPSˆŠBˆÙ[‹˜\ÜÙ\\]X[
+˜Z\ÙY™^Ù\[Û‹œ™\ÜÈœ[™[™×İ[˜Ù\Z[Y\È—VÌVÈœÙ\]Y[˜ÙWÚY—K˜Ú]ÜXÛÙ^ŠB‚ˆYˆ\İØÛWÙ^ÜÙ\×İ[˜Ù\Z[WÜXÚÙ]İÚ]Ø]ØZ][™×Ù^]ØÛÙJÙ[ŠN‚ˆ^[ØYHÈœØÚ[XWİ™\œÚ[ÛˆˆK˜™X]ÈˆØ™X]
+[˜Ù\Z[O^Âˆœ]Y\İ[Ûˆˆ•\ÙH\Èš\İX[È‹™]šY[˜ÙHˆ”Ûİ\˜ÙH]šX][Ûˆ\È\X[ˆ‹š[\XİˆÛİ[Z\ÛXYHX\›™\‹ˆ‹ˆœ™XÛÛ[Y[™][ÛˆˆÛÛ™š\›H]Üˆ™\XÙHH\ÜÙ]ˆ‹™XÚ\Ú[Û—Üİ]\Èˆœ[™[™ÈŸJW_BˆÚ][\š[K•[\Ü˜\Q\™XİÜJ
+H\È[\Ù\‚ˆ]H]
+[\Ù\ŠHÈ›ÚXÙK\ØÜ™Y[‹[X\šœÛÛˆ‚ˆ]Üš]Wİ^
+œÛÛ‹™[\Ê^[ØY
+K[˜ÛÙ[™ÏH]‹NŠBˆ™\İ[HİXœ›ØÙ\ÜËœ[ŠÜŞ\Ë™^Xİ]X›K‹[H‹›ÚXÙWÙ\™XİÜˆ‹˜[Y]K]›ÚXÙK\ØÜ™Y[ˆ‹‹K[X\‹İŠ]
+WKˆİÙT“ÓÕØ\\™WÛİ]]UYK^UYKÚXÚÏQ˜[ÙJBˆÙ[‹˜\ÜÙ\\]X[
+™\İ[œ™]\›˜ÛÙKÊBˆ™\ÜHœÛÛ‹›ØYÊ™\İ[œİİ]
+BˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈœİ]\È—KUĞRUS‘×ÒSPSˆŠBˆÙ[‹˜\ÜÙ\\]X[
+™\ÜÈœ[™[™×İ[˜Ù\Z[Y\È—VÌVÈœ]Y\İ[Ûˆ—K•\ÙH\Èš\İX[ÈŠB‚‚šYˆ×Û˜[YW×ÈOH—×ÛXZ[—×È‚ˆ[š]\İ›XZ[Š
+B
